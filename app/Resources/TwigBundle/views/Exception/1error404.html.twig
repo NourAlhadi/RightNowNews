@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}
+    RNN - Error 404
+{% endblock %}
+
+{% block iActive %}
+    active_1
+{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10 ctr">
+                <h1 class="alert alert-danger">تعذر الحصول على طلبكم الرجاء إعادة المحاولة لاحقا</h1>
+                <img src="https://sceptermarketing.com/wp-content/uploads/2017/09/Http-News-Html-Error-404-Was-Not-Found-Page-1349562.png" height="400px" width="400px">
+            </div>
+            <div class="col-sm-1"></div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block stylesheets %}
+
+    <style>
+        h1, p, .ctr{
+            text-align: center!important;
+            direction: rtl!important;
+        }
+
+    </style>
+
+{% endblock %}

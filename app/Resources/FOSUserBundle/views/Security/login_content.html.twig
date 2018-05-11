@@ -1,0 +1,28 @@
+
+<h2>مرحبا بك مجددا!!! لقد افتقدناك حقا </h2>
+
+
+{% if error %}
+    <div class="alert alert-danger">تعذر تسجيل الدخول الرجاء التأكد من المعلومات المدخلة وإعادة المحاولة!!</div>
+    <div class="alert alert-info">إن لم يكن لديك حساب مستخدم يمكنك التسجيل من خلال <a href="{{ path('fos_user_registration_register') }}">الضغط هنا</a> </div>
+{% endif %}
+
+<form action="{{ path("fos_user_security_check") }}" method="post" class="form_main aniview">
+    {% if csrf_token %}
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+    {% endif %}
+
+    <label for="username">اسم المستخدم: </label>
+    <input class="form-control" type="text" id="username" name="_username" placeholder="الرجاء ادخال اسم المستخدم" required="required" autocomplete="username" />
+    <br>
+    <label for="password">كلمة المرور: </label>
+    <input class="form-control" type="password" id="password" name="_password" placeholder="الرجاء ادخال كلمة المرور" required="required" autocomplete="current-password" />
+    <br>
+
+    <label class="label" for="remember_me">تذكر معلومات الدخول:
+        <input type="checkbox" id="remember_me" name="_remember_me" value="on">
+        <span class="checkmark"></span>
+    </label>
+    <br>
+    <input class="text-right" type="submit" id="_submit" name="_submit" value="تسجيل الدخول" />
+</form>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href={{ asset('Assets/css/bootstrap.min.css') }} >
+        <link rel="stylesheet" href={{ asset('Assets/css/style.css') }} >
+        <link rel="stylesheet" href={{ asset('Assets/css/font-awesome.min.css') }}>
+        <title>{% block title %}Right Now News{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
+        <style>
+
+            .news{
+                position: relative;
+                box-shadow: #333;
+                height: 50px;
+                background-color: #C00;
+                width:98%;
+                color:white;
+                font-size: 20px;
+                overflow: hidden;
+                margin: 5px auto auto auto;
+                border: 3px solid lightgrey;
+            }
+
+            #news{
+                margin-top:10px;
+                position: absolute;
+                left: 0;
+                white-space: nowrap;
+            }
+
+            .content *{
+                text-align: right;
+                direction: rtl;
+            }
+            html,
+            body {
+                margin:0!important;
+                padding:0!important;
+                height:100%!important;
+                width:99.6%!important;
+            }
+            .container-main {
+                min-height:100%;
+                position:relative;
+            }
+            .content {
+                padding:10px;
+                padding-bottom:150px;   /* Height of the footer */
+            }
+            #footer {
+                position:absolute;
+                bottom:0;
+                width:100.4%;
+                height:150px;   /* Height of the footer */
+            }
+            form li input{
+                border-radius: 5px;
+                height: 30px!important;
+                margin: 0!important;
+                width: 200px!important;
+                direction: rtl!important;
+            }
+        </style>
+
+        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    </head>
+    <body>
+    <div class="container-main">
+        <section id="top">
+            <nav class="navbar navbar-inverse navbar-fixed-top">
+                <div class="container">
+                    <div class="navbar-header clearfix">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>      </button>
+                        <div class="brand_1 clearfix"><a class="navbar-brand" href="{{ path('index') }}">RNN</a></div>
+                    </div>
+                    <div>
+                        <div class="collapse navbar-collapse" id="myNavbar">
+                            <ul class="nav navbar-nav">
+                                <li><a class="border_1 {% block iActive %} {% endblock %}" href="{{ path('index') }}">الرئيسية</a></li>
+                                <li><a class="border_1 {% block sActive %} {% endblock %}" href="{{ path('syria') }}">سوريا</a></li>
+                                <li><a class="border_1 {% block wActive %} {% endblock %}"  href="{{ path('world') }}">أخبار العالم</a></li>
+
+                                <li><a class="{% block cActive %} {% endblock %}" href="{{ path('contact') }}">تواصل معنا</a></li>
+                            </ul>
+                            <ul class="nav navbar-nav navbar-right">
+                                <li>
+                                    {% if is_granted('ROLE_USER') %}
+                                        <a style="display: inline;" href="{{ path('fos_user_profile_show') }}"><button class="btn btn-default btn-sm" type="submit">
+                                                <i class="glyphicon glyphicon-dashboard"></i>حسابي
+                                            </button></a>
+                                        <a style="display: inline;"  href="{{ path('fos_user_security_logout') }}"><button class="btn btn-default btn-sm" type="submit">
+                                                <i class="glyphicon glyphicon-log-out"></i> خروج
+                                            </button>
+                                        </a>
+                                    {% else %}
+                                        <a style="display: inline;" href="{{ path('fos_user_security_login') }}"><button class="btn btn-default btn-sm" type="submit">
+                                            <i class="glyphicon glyphicon-log-in"></i>   دخول
+                                        </button></a>
+                                        <a style="display: inline;"  href="{{ path('fos_user_registration_register') }}"><button class="btn btn-default btn-sm" type="submit">
+                                            <i class="glyphicon glyphicon-user"></i> تسجيل
+                                        </button>
+                                        </a>
+                                    {% endif %}
+
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </section>
+
+        <div>
+            <br><br><br>
+            {% if hot is defined %}
+                {% if hot|length > 0 %}
+                    <div class="news" onmouseleave="time()" onmouseover="clears()">
+                        <p id="news">
+                            {% set idx = 0 %}
+                            {% for post in hot %}
+                                {% set idx = idx + 1 %}
+                                <a href="{{ path('post',{'id':post.id}) }}" style="color:white; text-decoration: none">
+                                    {{ post.title }}
+                                </a>
+                                {% if idx != hot|length %}
+                                    &nbsp;&nbsp;&nbsp; *** &nbsp;&nbsp;&nbsp;
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <div class="content">
+            {% block body %}{% endblock %}
+        </div>
+        <section id="footer" style="height: 200px; margin-bottom: -200px">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="col-sm-8">
+                            <div class="footer_3">
+                                <span><a>RNN</a></span>
+                                <a> World Wide News</a>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search">
+                                <span class="input-group-btn">
+                                <button class="btn btn-primary" type="button">Go!</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 count_5">
+
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="footer_4 text-center">
+                            <p>All rights reserved © RNN 2018.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+        <script type="text/javascript">
+            var timer;
+            var news = document.getElementById("news");
+            var d= document, root= d.documentElement, body= d.body;
+            var wid= window.innerWidth || root.clientWidth || body.clientWidth;
+            var cur = -300 , nx , w;
+
+            function move(){
+                nx = cur + 1;
+                cur = nx;
+                if (nx > wid) {
+                    nx = -300;
+                    cur = nx;
+                }
+                news.style.left = nx + "px" ;
+                timer = setTimeout(move,20);
+            }
+            window.onload = function() {
+                w = document.getElementById("news").offsetWidth;
+                timer = setTimeout(move, 20);
+                ans.value = "";
+                showTime();
+            };
+
+            function clears(){
+                clearTimeout(timer);
+            }
+
+            function time(){
+                timer = setTimeout(move,20);
+            }
+
+        </script>
+        {% block javascripts %}{% endblock %}
+        <script src={{ asset('Assets/js/jquery-2.1.1.min.js') }}></script>
+        <script src={{ asset('Assets/js/bootstrap.min.js') }}></script>
+    </body>
+</html>

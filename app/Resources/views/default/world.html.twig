@@ -1,0 +1,284 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}
+    RNN - World Wide
+{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-sm-12">
+            {% set rnd = random(min(5,(news|length)-1)) %}
+            <a href="{{ path('post',{'id':news[rnd].id}) }}">
+                <div class="regions_1 text-center">
+                    <h2> ما يحدث الآن في العالم</h2>
+                    <p>{{ news[rnd].title }}</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 politics_main_5">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <div id="transition-timer-carousel" class="carousel slide transition-timer-carousel" data-ride="carousel">
+
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        {% set idx = 0 %}
+                        {% for post in news if idx < 10 %}
+                            {% if idx == 0 %}
+                                <li data-target="#transition-timer-carousel" data-slide-to="0" class="active"></li>
+                            {% else %}
+                                <li data-target="#transition-timer-carousel" data-slide-to="{{ idx }}"></li>
+                            {% endif %}
+                            {% set idx = idx + 1 %}
+                        {% endfor %}
+                    </ol>
+
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner">
+
+                        {% set idx = 0 %}
+                        {% for post in news if idx < 10 %}
+                            {% if idx == 0 %}
+                                <div class="item active">
+                                    <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                    <div class="carousel-caption">
+                                        <a href="{{ path('post',{'id':post.id}) }}" >
+                                            <h1 class="carousel-caption-header">{{ post.title }}</h1>
+                                        </a>
+                                        <p class="carousel-caption-text hidden-sm hidden-xs"></p>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="item">
+                                    <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                    <div class="carousel-caption">
+                                        <a href="{{ path('post',{'id':post.id}) }}" >
+                                            <h1 class="carousel-caption-header">{{ post.title }}</h1>
+                                        </a>
+                                        <p class="carousel-caption-text hidden-sm hidden-xs"></p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% set idx = idx + 1 %}
+                        {% endfor %}
+
+
+                    </div>
+
+                    <!-- Controls -->
+                    <a class="left carousel-control" href="http://bootsnipp-env.elasticbeanstalk.com/iframe/yjX1#transition-timer-carousel" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                    </a>
+                    <a class="right carousel-control" href="http://bootsnipp-env.elasticbeanstalk.com/iframe/yjX1#transition-timer-carousel" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!----------------------------END OF CAROUSEL---------------------------------------------->
+    <br><br>
+    <div style="background-color: #222; border: .1px solid #222; height: 1.5px; width: 60%; float: none; margin: 0 auto;"> </div>
+    <br><br>
+
+
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h2>آخر الأخبار العالم</h2></div>
+            <div class="panel-body">
+
+                <div class="col-sm-12 politics_main_1">
+
+                    <div class="row">
+                        <div class="col-sm-1"></div>
+
+                        <div class="col-sm-5">
+                            <div class="politics_3">
+                                <h4>اقتصاد</h4>
+                                {% set idx = 0 %}
+                                {% for post in economy if idx < 10 %}
+                                {% if idx == 0 %}
+                                <a href="{{ path('post',{'id':post.id}) }}">
+                                    <!--img src="{{ post.mainImage }}" width="100%"-->
+                                    <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                    <h2>{{ post.title }}</h2>
+                                </a>
+
+                            {% elseif idx == 1 %}
+                                <ul>
+                                    <li><a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a></li>
+                                    {% else %}
+                                        <li class="border_none_1"><a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a></li>
+                                    {% endif %}
+                                    {% set idx = idx + 1 %}
+                                    {% endfor %}
+                                    {% if idx > 0 %}
+                                </ul>
+                            {% else %}
+                                <div class="alert alert-danger">نعتذر عن عدم وجود أخبار حاليا!!</div>
+                                {% endif %}
+                                {% if economy|length >= 10 %}
+                                    <div class="alert alert-info">
+                                        <!---->للمزيد من أخبار الاقتصادية العالمية <a href="{{ path('newslocation',{'type':'اقتصاد','location':'العالم'}) }}">اضغط هنا</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-5">
+                            <div class="politics_3">
+                                <h4>سياسة</h4>
+                                {% set idx = 0 %}
+                                {% for post in politics if idx < 10 %}
+                                {% if idx == 0 %}
+                                <a href="{{ path('post',{'id':post.id}) }}">
+                                    <!--img src="{{ post.mainImage }}" width="100%"-->
+                                    <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                    <h2>{{ post.title }}</h2>
+                                </a>
+
+
+                            {% elseif idx == 1 %}
+                                <ul>
+                                    <li><a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a></li>
+                                    {% else %}
+                                        <li class="border_none_1"><a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a></li>
+                                    {% endif %}
+                                    {% set idx = idx + 1 %}
+                                    {% endfor %}
+                                    {% if idx > 0 %}
+                                </ul>
+                            {% else %}
+                                <div class="alert alert-danger">نعتذر عن عدم وجود أخبار حاليا!!</div>
+                                {% endif %}
+                                {% if politics|length >= 10 %}
+                                    <div class="alert alert-info">
+                                        <!---->للمزيد من أخبار السياسة العالمية <a href="{{ path('newslocation',{'type':'سياسة','location':'العالم'}) }}">اضغط هنا</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-sm-1"></div>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-sm-1"></div>
+
+                        <div class="col-sm-5">
+                            <div class="politics_3">
+                                <h4>منوعات</h4>
+                                {% set idx = 0 %}
+                                {% for post in misc if idx < 10 %}
+                                {% if idx == 0 %}
+                                <a href="{{ path('post',{'id':post.id}) }}">
+                                    <!--img src="{{ post.mainImage }}" width="100%"-->
+                                    <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                    <h2>{{ post.title }}</h2>
+                                </a>
+
+
+                            {% elseif idx == 1 %}
+                                <ul>
+                                    <li><a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a></li>
+                                    {% else %}
+                                        <li class="border_none_1"><a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a></li>
+                                    {% endif %}
+                                    {% set idx = idx + 1 %}
+                                    {% endfor %}
+                                    {% if idx > 0 %}
+                                </ul>
+                            {% else %}
+                                <div class="alert alert-danger">نعتذر عن عدم وجود أخبار حاليا!!</div>
+                                {% endif %}
+                                {% if misc|length >= 10 %}
+                                    <div class="alert alert-info">
+                                        <!---->للمزيد من الأخبار المنوعة العالمية <a href="{{ path('newslocation',{'type':'منوع','location':'العالم'}) }}">اضغط هنا</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-5">
+                            <div class="politics_3">
+                                <h4>رياضة</h4>
+                                {% set idx = 0 %}
+                                {% for post in sport if idx < 10 %}
+                                {% if idx == 0 %}
+                                <a href="{{ path('post',{'id':post.id}) }}">
+                                    <!--img src="{{ post.mainImage }}" width="100%"-->
+                                    <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                    <h2>{{ post.title }}</h2>
+                                </a>
+
+
+                            {% elseif idx == 1 %}
+                                <ul>
+                                    <li><a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a></li>
+                                    {% else %}
+                                        <li class="border_none_1"><a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a></li>
+                                    {% endif %}
+                                    {% set idx = idx + 1 %}
+                                    {% endfor %}
+                                    {% if idx > 0 %}
+                                </ul>
+                            {% else %}
+                                <div class="alert alert-danger">نعتذر عن عدم وجود أخبار حاليا!!</div>
+                                {% endif %}
+                                {% if sport|length >= 10 %}
+                                    <div class="alert alert-info">
+                                        <!---->للمزيد من أخبار الرياضة العالمية <a href="{{ path('newslocation',{'type':'رياضة','location':'العالم'}) }}">اضغط هنا</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="col-sm-1"></div>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .carousel .item {
+            height: 500px;
+        }
+
+        .item img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%!important;
+            width: 100%!important;
+        }
+
+        .content *{
+            text-align: center!important;
+        }
+        .carousel-caption a{
+            color: white;
+        }
+        .carousel-caption a:hover{
+            color: #ccc;
+        }
+    </style>
+{% endblock %}
+
+{% block wActive %}
+    active_1
+{% endblock %}

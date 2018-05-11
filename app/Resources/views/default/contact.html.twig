@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    RNN - Contact US
+{% endblock %}
+
+{% block cActive %}
+    active_1
+{% endblock %}
+
+
+{% block body %}
+    <section id="contact_us">
+        <div class="container">
+            <h2>نحن بانتظار تواصلكم معنا</h2>
+            <h4>سنوافيكم بالردود على استفساراتكم باسرع وقت</h4>
+
+            <div class="row">
+                <div class="col-sm-12 form_main aniview" data-av-animation="slideInRight">
+                    {{ form_start(form) }}
+                        <div class="col-sm-6">
+                            {{ form_widget(form.email , {'attr': {'class': 'form-control', 'placeholder': 'البريد الإلكتروني', 'value': ''} }) }}
+                            {{ form_errors(form.email) }}
+                        </div>
+                        <div class="col-sm-6">
+                            {{ form_widget(form.sender , {'attr': {'class': 'form-control', 'placeholder': 'المرسل', 'value': ''} }) }}
+                            {{ form_errors(form.sender) }}
+                        </div>
+                        <br>
+                        <div class="col-sm-6">
+                            {{ form_widget(form.address , {'attr': {'class': 'form-control', 'placeholder': 'العنوان', 'value': ''} }) }}
+                            {{ form_errors(form.address) }}
+                        </div>
+                        <div class="col-sm-6">
+                            {{ form_widget(form.phone , {'attr': {'class': 'form-control', 'placeholder': 'رقم الهاتف', 'value': ''} }) }}
+                            {{ form_errors(form.phone) }}
+                        </div>
+                        <br>
+                        <div class="col-sm-12">
+                            {{ form_widget(form.message , {'attr': {'class': 'form-control', 'placeholder': 'الرسالة', 'value': ''} }) }}
+                            {{ form_errors(form.message) }}
+                        </div>
+                        <br>
+                        <div class="col-sm-12 text-right">
+                            {{ form_widget(form.submit) }}
+                        </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        body{
+            background-color: #333!important;
+        }
+        h2, h4{
+            color: white!important;
+        }
+        input{
+            color:white!important;
+        }
+        textarea{
+            color:white!important;
+        }
+        form div button{
+            width: 60px;
+            height: 40px;
+            border: 1px solid #AAA!important;
+            background-color: #333!important;
+            color:#AAA!important;
+        }
+        form div button:hover{
+            color:#333!important;
+            background-color: #AAA!important;
+        }
+    </style>
+{% endblock %}
