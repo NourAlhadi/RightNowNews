@@ -1,0 +1,14 @@
+
+<h2>يبدو أنك فقدت كلمة المرور الخاصة بك!! لا تقلق استعادتها ليس بالأمر الصعب</h2>
+
+
+
+<form action="{{ path('fos_user_resetting_send_email') }}" method="POST" class="fos_user_resetting_request form_main">
+    <div>
+        <label for="username">اسم المستخدم الخاص بك</label>
+        <input class="form-control" type="text" id="username" name="username" required="required" placeholder="يرجى إدخال اسم المستخدم" />
+    </div>
+    <div>
+        <input type="submit" value=" إعادة التعيين" />
+    </div>
+</form>

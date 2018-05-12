@@ -1,0 +1,34 @@
+
+<h2>مرحبا بك معنا!! يسعدنا انضمامك إلينا</h2>
+
+
+{{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register form_main aniview'}}) }}
+
+    {{ form_widget(form.email, { 'attr': {'class': 'form-control', 'placeholder': 'البريد الإلكتروني' } }) }}
+    {% if form_errors(form.email) != "" %}
+        <div class="alert alert-danger">
+            <!----> البريد الذي قمت بإدخاله هو قيد الاستخدام بالفعل!!
+        </div>
+    {% endif %}
+    {{ form_widget(form.username, { 'attr': {'class': 'form-control', 'placeholder': 'اسم المستخدم'  } }) }}
+    {% if form_errors(form.username) != "" %}
+        <div class="alert alert-danger">
+            <!----> اسم المستخدم الذي قمت بإدخاله هو قيد الاستخدام بالفعل!!
+        </div>
+    {% endif %}
+
+    {{ form_widget(form.plainPassword.first, { 'attr': {'class': 'form-control', 'placeholder': 'كلمة المرور' } }) }}
+
+    {{ form_widget(form.plainPassword.second, { 'attr': {'class': 'form-control', 'placeholder': 'تأكيد كلمة المرور'  } }) }}
+    {% if (form_errors(form.plainPassword.first) != "") or (form_errors(form.plainPassword.second) != "") %}
+        <div class="alert alert-danger">
+            <!----> كلمتا المرور غير متطابقتان الرجاء التأكد!!
+        </div>
+    {% endif %}
+
+
+    <div>
+        <input style="display: inline" type="submit" value="تسجيل" />
+        <input style="display: inline" class="form-control" type="reset" value="مسح البيانات" />
+    </div>
+{{ form_end(form) }}
