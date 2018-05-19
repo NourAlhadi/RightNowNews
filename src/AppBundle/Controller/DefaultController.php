@@ -4,10 +4,13 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Message;
 use AppBundle\Form\MessageType;
+use AppBundle\Form\UserType;
 use AppBundle\Service\FilterNews;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
@@ -19,6 +22,11 @@ class DefaultController extends Controller
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function postAction($id, FilterNews $filter){
+        $user = $this->getUser();
+        $user->setFname("Nour Alhadi");
+        $userManager = $this->get('fos_user.user_manager');
+        $userManager->updateUser($user);
+
         $em = $this->getDoctrine()->getManager();
         $post = $em->getRepository('AppBundle:news')->findOneBy(['id'=>$id]);
         if (is_null($post)){
@@ -260,6 +268,7 @@ class DefaultController extends Controller
 
     /**
      * @Route("/", name="index")
+     * @Route("/", name="fos_user_registration_confirmed")
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function indexAction(FilterNews $filter){
@@ -292,5 +301,91 @@ class DefaultController extends Controller
     }
 
 
+    /**
+     * @Route("/profile/info/edit/",name="edit_profile")
+     */
+    public function editAction(Request $request){
 
+        $user = $this->getUser();
+        $form = $this->createForm(UserType::class,$user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->get('fos_user.user_manager')->updateUser($user);
+
+            return $this->redirect($this->generateUrl('fos_user_profile_show'));
+        }
+
+
+        return $this->render('default/edit.html.twig',[
+            "form" => $form->createView(),
+        ]);
+    }
+    /**
+     * @Route("/profile/info/change-password/",name="change_password")
+     */
+    public function passwordAction(Request $request){
+
+        $user = $this->getUser();
+
+        $defaultData = array('id' => 1);
+        $form = $this->createFormBuilder($defaultData)
+            ->add('pass', PasswordType::class,[
+                "label" => 'كلمة المرور الحالية: '
+            ])
+            ->add('npass', PasswordType::class,[
+                "label" => 'كلمة المرور الجديدة: '
+            ])
+            ->add('npassrep', PasswordType::class,[
+                "label" => 'تأكيد كلمة المرور: '
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        $mismatch = false;
+        $incorrect = false;
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            $pass = $data["pass"];
+            $npass1 = $data["npass"];
+            $npass2 = $data["npassrep"];
+            if ($npass1 !== $npass2){
+                $mismatch = true;
+            }
+
+
+            $factory = $this->get('security.encoder_factory');
+
+            $user = $this->getUser();
+
+            $encoder = $factory->getEncoder($user);
+            $incorrect = ($encoder->isPasswordValid($user->getPassword(),$pass,$user->getSalt())) ? $incorrect : true;
+
+
+            if (!($incorrect || $mismatch)){
+                $newpass = $encoder->encodePassword($npass1, $user->getSalt());
+                $user->setPassword($newpass);
+                $manager = $this->get('fos_user.user_manager');
+                $manager->updateUser($user);
+                return $this->redirect($this->generateUrl('fos_user_profile_show'));
+            }
+
+
+        }
+
+        if ($mismatch){
+            $form->get('npass')->addError(new FormError('كلمتا السر غير متطابقتان'));
+        }
+
+        if ($incorrect){
+            $form->get('npass')->addError(new FormError('كلمة السر التي أدخلتها ليست كلمة السر الخاصة بهذا الحساب'));
+        }
+
+        return $this->render('default/change_password.html.twig',[
+            "form" => $form->createView(),
+        ]);
+    }
 }

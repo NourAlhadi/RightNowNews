@@ -1,0 +1,128 @@
+{% extends 'profile_base.html.twig' %}
+
+
+{% block header %}
+    <h1 class="header1">مرحبا بك {{ user.fname }}!!</h1>
+{% endblock %}
+
+{% block main %}
+    <div class="container main_all">
+        <div class="row">
+            <div class="col-sm-3 col-xs-1"></div>
+
+            <div class="col-sm-6 col-xs-10 item">
+                <h1> هذا مايوجد في ملفك الشخصي </h1>
+
+                {% if user.avatar != "" %}
+                    <img class="img-circle" src="{{ user.avatar }}">
+                {% else %}
+                    <img class="img-circle" src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg">
+                {% endif %}
+
+                <hr>
+
+                <div class="row">
+                    <div class="col-xs-8">{{ user.username }}</div>
+                    <div class="col-xs-4">اسم المستخدم: </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-8">{{ user.fname ~ " " ~ user.lname }}</div>
+                    <div class="col-xs-4">الاسم الكامل: </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-8">{{ user.email }}</div>
+                    <div class="col-xs-4">البريد الإلكتروني: </div>
+                </div>
+
+
+                <a href="{{ path('edit_profile') }}"><input type=button value="تعديل بياناتي">&nbsp;</a>
+                <a href="{{ path('change_password') }}"><input type=button value="تغيير كلمة المرور">&nbsp;</a>
+
+            </div>
+
+            <div class="col-sm-3 col-xs-1"></div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block stylesheets %}
+    <style>
+        .header1{
+            text-align: center;
+            color:#333;
+            direction: rtl;
+        }
+        .item{
+            font-size: 18px;
+            font-weight: bold;
+            direction: rtl;
+            background-color: #e1e1e1;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-shadow: 5px 5px 4px 5px #888888;
+            min-height: 600px!important;
+        }
+
+        .row{
+            margin-bottom: 20px!important;
+        }
+        .img-circle{
+
+            box-shadow: 5px 5px 4px 5px #888;
+            margin: 25px auto!important;
+            float: none;
+            width: 200px;
+            height: 200px;
+            display: block;
+        }
+
+        p, .item a button{
+            direction: rtl;
+            font-size: 20px;
+            font-weight: bold;
+            padding-top: 20px;
+        }
+        .item a button{
+            padding-top: 0;
+            margin-top: 20px;
+            float: right;
+            color:#333;
+            font-weight: normal;
+        }
+
+        .item h1{
+            background: #C00;
+            padding: 20px 0;
+            font-size: 140%;
+            font-weight: 300;
+            text-align: center;
+            color: #fff;
+            margin: -16px -16px 16px -16px;
+            direction: rtl;
+        }
+
+        input[type="submit"],
+        input[type="button"]{
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            width: 100%;
+            padding: 3%;
+            background: #C00;
+            border-bottom: 2px solid #C00;
+            border-top-style: none;
+            border-right-style: none;
+            border-left-style: none;
+            color: #fff;
+        }
+        input[type="submit"]:hover,
+        input[type="button"]:hover {
+            background: #C00;
+        }
+
+    </style>
+{% endblock %}
