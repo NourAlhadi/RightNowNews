@@ -14,10 +14,10 @@
             }
 
 
-            a{
+            a:not(.nave){
                 border:none!important;
             }
-            a:hover{
+            a:not(.nave):hover{
                 background-color: transparent!important;
             }
 
@@ -47,9 +47,9 @@
                         <div>
                             <div class="collapse navbar-collapse" id="myNavbar">
                                 <ul class="nav navbar-nav">
-                                    <li><a class="border_1 {% block iActive %} {% endblock %}" href="{{ path('index') }}">الرئيسية</a></li>
-                                    <li><a class="border_1 {% block sActive %} {% endblock %}" href="{{ path('syria') }}">أخباري المفضلة</a></li>
-                                    <li><a class="{% block cActive %} {% endblock %}" href="{{ path('contact') }}">تواصل معنا</a></li>
+                                    <li><a class="nave border_1 {% block iActive %} {% endblock %}" href="{{ path('index') }}">الرئيسية</a></li>
+                                    <li><a class="nave border_1 {% block sActive %} {% endblock %}" href="{{ path('syria') }}">أخباري المفضلة</a></li>
+                                    <li><a class="nave {% block cActive %} {% endblock %}" href="{{ path('contact') }}">تواصل معنا</a></li>
                                 </ul>
                                 <ul class="nav navbar-nav navbar-right">
                                     <li>
@@ -89,6 +89,7 @@
             {% endblock %}
         </div>
 
+        <script src="{{ asset('Assets/js/Chart.min.js') }}"></script>
         {% block javascripts %}
 
         {% endblock %}

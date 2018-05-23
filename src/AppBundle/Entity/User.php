@@ -21,6 +21,7 @@ class User extends BaseUser
     public function __construct()
     {
         parent::__construct();
+        $this->log = array_fill(0,10,0);
     }
 
     /**
@@ -49,6 +50,35 @@ class User extends BaseUser
      * @var string
      */
     private $lname;
+
+
+    /**
+     * @ORM\Column(name="chart", type="array")
+     * @var array
+     */
+    private $log;
+
+    /**
+     * @return mixed
+     */
+    public function getLog()
+    {
+        return $this->log;
+    }
+
+    /**
+     * @param mixed $log
+     */
+    public function setLog($log)
+    {
+        $this->log = $log;
+    }
+
+
+    public function incLog($id){
+        $this->log[$id]++;
+    }
+
 
     /**
      * @return string

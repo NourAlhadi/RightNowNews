@@ -9,44 +9,52 @@
 
     <section id="stories">
         <div class="container">
-            <div class="row">
-                <div class="col-sm-3">
-                    <div class="stories_1">
-                        <h5>العناوين</h5>
-                        <ul>
-                            {% set val = random((hot_news|length) - 1) %}
-                            {% for i in 0..(hot_news|length - 1) %}
-                                {% if i != val %}
-                                    {% if i + 1 != hot_news|length %}
-                                        <li class="border_bottom_1"><a href="{{ path('post', {'id':hot_news[i].id}) }}">{{ hot_news[i].title }}</a></li>
-                                    {% else %}
-                                        <li><a href="{{ path('post', {'id':hot_news[i].id}) }}"> {{ hot_news[i].title }} </a></li>
+            {% if hot_news|length > 0 %}
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="stories_1">
+                            <h5>العناوين</h5>
+                            <ul>
+                                {% set val = random((hot_news|length) - 1) %}
+                                {% for i in 0..(hot_news|length - 1) %}
+                                    {% if i != val %}
+                                        {% if i + 1 != hot_news|length %}
+                                            <li class="border_bottom_1"><a href="{{ path('post', {'id':hot_news[i].id}) }}">{{ hot_news[i].title }}</a></li>
+                                        {% else %}
+                                            <li><a href="{{ path('post', {'id':hot_news[i].id}) }}"> {{ hot_news[i].title }} </a></li>
+                                        {% endif %}
                                     {% endif %}
-                                {% endif %}
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-sm-9">
-                    <div class="stories_2">
-                        <h1 class="text-center"><a href="{{ path('post', {'id':hot_news[val].id} ) }}"  style="font-size: 40px;">{{ hot_news[val].title }}</a></h1>
-                        <div class="story_image">
-                            <div>
-                                <a href="{{ path('post',{'id':hot_news[val].id}) }}" >
-                                    <!--img src="{{ hot_news[val].mainImage }}" width="100%"-->
-                                    <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
-                                </a>
-                            </div>
-                            <div class="story_heading">
-                                <a href="{{ path('location',{'location':hot_news[val].location}) }}">
-                                    <h5 style="text-align: center">&nbsp;&nbsp; {{ hot_news[val].location }}</h5>
-                                </a>
-                            </div>
+                                {% endfor %}
+                            </ul>
                         </div>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="stories_2">
+                            <h1 class="text-center"><a href="{{ path('post', {'id':hot_news[val].id} ) }}"  style="font-size: 40px;">{{ hot_news[val].title }}</a></h1>
+                            <div class="story_image">
+                                <div>
+                                    <a href="{{ path('post',{'id':hot_news[val].id}) }}" >
+                                        <!--img src="{{ hot_news[val].mainImage }}" width="100%"-->
+                                        <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                    </a>
+                                </div>
+                                <div class="story_heading">
+                                    <a href="{{ path('location',{'location':hot_news[val].location}) }}">
+                                        <h5 style="text-align: center">&nbsp;&nbsp; {{ hot_news[val].location }}</h5>
+                                    </a>
+                                </div>
+                            </div>
 
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h1 class="alert alert-danger">لا يوجد أخبار جديدة حاليا!! الرجاء العودة لاحقا لمتابعة المستجدات</h1>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </section>
 
@@ -59,51 +67,56 @@
     <section id="buzz">
         <div class="container">
             <div class="row">
+                {% if politics|length > 0 %}
 
+                    <div class="col-sm-6">
+                        {% set count = 0 %}
+                        {% for post in politics if count <= 3 %}
+                            {% set count = count + 1 %}
 
-
-                <div class="col-sm-6">
-                    {% set count = 0 %}
-                    {% for post in politics if count <= 3 %}
-                        {% set count = count + 1 %}
-
-                        {% if count != 1 %}
-                            <div class="col-sm-12 buzz_main">
-                                <div class="col-sm-5 buzz_inner">
-                                    <div class="buzz_2">
-                                        <!--img src="{{ post.mainImage }}" width="100%"-->
-                                        <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                            {% if count != 1 %}
+                                <div class="col-sm-12 buzz_main">
+                                    <div class="col-sm-5 buzz_inner">
+                                        <div class="buzz_2">
+                                            <!--img src="{{ post.mainImage }}" width="100%"-->
+                                            <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-7 buzz_inner_1">
+                                        <a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a>
                                     </div>
                                 </div>
-                                <div class="col-sm-7 buzz_inner_1">
-                                    <a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a>
-                                </div>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
 
-                <div class="col-sm-6">
-                    {% set count = 0 %}
-                    {% for post in politics if count <= 3 %}
-                        {% set count = count + 1 %}
-                        {% if count == 1 %}
-                            <div class="stories_1 feature_1">
-                                <h5>أهم الأحداث السياسية</h5>
-                                <a href="{{ path('post',{'id':post.id}) }}">
-                                    <!--img src="{{ post.mainImage }}" width="100%"-->
-                                    <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
-                                </a>
-                                <div class="buzz_1">
+                    <div class="col-sm-6">
+                        {% set count = 0 %}
+                        {% for post in politics if count <= 3 %}
+                            {% set count = count + 1 %}
+                            {% if count == 1 %}
+                                <div class="stories_1 feature_1">
+                                    <h5>أهم الأحداث السياسية</h5>
                                     <a href="{{ path('post',{'id':post.id}) }}">
-                                        {{ post.title }}
+                                        <!--img src="{{ post.mainImage }}" width="100%"-->
+                                        <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
                                     </a>
+                                    <div class="buzz_1">
+                                        <a href="{{ path('post',{'id':post.id}) }}">
+                                            {{ post.title }}
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h1 class="alert alert-danger">لا يوجد أخبار سياسية حاليا!! الرجاء العودة لاحقا لمتابعة المستجدات</h1>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
 
 
@@ -139,86 +152,101 @@
                     <div class="features_2">
 
                         <div class="col-sm-1"></div>
+                        {% if tech|length > 0 %}
+                            <div class="col-sm-5 f_1">
+                                <div class="stories_1">
+                                    <a  class="heading_tag" href="#"><h5>تكنولوجيا</h5></a>
+                                    {% set count = 0 %}
+                                    {% for post in tech if count < 5 %}
+                                        {% set count = count +1 %}
+                                        {% if count == 1 %}
+                                            <a href="{{ path('post',{'id':post.id}) }}">
+                                                <!--img src="{{ post.mainImage }}" width="100%"-->
+                                                <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                            </a>
+                                            <ul>
+                                                <li class="border_bottom_1">
+                                                    <a href="{{ path('post',{'id':post.id}) }}">{{  post.title }}</a>
+                                                </li>
+                                        {% elseif count > 0 and count < 5 %}
+                                                <li class="border_bottom_1">
+                                                    <a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a>
+                                                </li>
+                                        {% else %}
+                                                <li>
+                                                    <a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a>
+                                                </li>
 
-                        <div class="col-sm-5 f_1">
-                            <div class="stories_1">
-                                <a  class="heading_tag" href="#"><h5>تكنولوجيا</h5></a>
-                                {% set count = 0 %}
-                                {% for post in tech if count < 5 %}
-                                    {% set count = count +1 %}
-                                    {% if count == 1 %}
-                                        <a href="{{ path('post',{'id':post.id}) }}">
-                                            <!--img src="{{ post.mainImage }}" width="100%"-->
-                                            <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
-                                        </a>
-                                        <ul>
-                                            <li class="border_bottom_1">
-                                                <a href="{{ path('post',{'id':post.id}) }}">{{  post.title }}</a>
-                                            </li>
-                                    {% elseif count > 0 and count < 5 %}
-                                            <li class="border_bottom_1">
-                                                <a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a>
-                                            </li>
-                                    {% else %}
-                                            <li>
-                                                <a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a>
-                                            </li>
-
-                                        </ul>
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                {% if tech|length > 5 %}
-                                                    <br><br>
-                                                    <div style="text-align: center;" class="alert alert-info">للمزيد من الأخبار التكنولوجية <a href="{{ path('type',{'type':'تكنولوجيا'}) }}">اضغط هنا</a> </div>
-                                                {% endif %}
+                                            </ul>
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    {% if tech|length > 5 %}
+                                                        <br><br>
+                                                        <div style="text-align: center;" class="alert alert-info">للمزيد من الأخبار التكنولوجية <a href="{{ path('type',{'type':'تكنولوجيا'}) }}">اضغط هنا</a> </div>
+                                                    {% endif %}
+                                                </div>
                                             </div>
-                                        </div>
-                                    {% endif %}
-                                {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="col-sm-5 f_1">
-                            <div class="stories_1">
-                                <a  class="heading_tag" href="#"><h5>رياضة</h5></a>
-                                {% set count = 0 %}
-                                {% for post in sport if count < 5 %}
-                                    {% set count = count +1 %}
-                                    {% if count == 1 %}
-                                        <a href="{{ path('post',{'id':post.id}) }}">
-                                            <!--img src="{{ post.mainImage }}" width="100%"-->
-                                            <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
-                                        </a>
-                                        <ul>
-                                            <li class="border_bottom_1">
-                                                <a href="{{ path('post',{'id':post.id}) }}">{{  post.title }}</a>
-                                            </li>
-                                    {% elseif count > 0 and count < 5 %}
-                                            <li class="border_bottom_1">
-                                                <a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a>
-                                            </li>
-                                    {% else %}
-                                            <li>
-                                                <a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a>
-                                            </li>
+                        {% else %}
+                            <div class="row">
+                                <div class="col-sm-5 f_1">
+                                    <h3 class="alert alert-danger">لا يوجد أخبار تكنولوجيا حاليا!! الرجاء العودة لاحقا لمتابعة المستجدات</h3>
+                                </div>
+                            </div>
+                        {% endif %}
 
-                                        </ul>
+                        {% if sport|length > 0 %}
+                            <div class="col-sm-5 f_1">
+                                <div class="stories_1">
+                                    <a  class="heading_tag" href="#"><h5>رياضة</h5></a>
+                                    {% set count = 0 %}
+                                    {% for post in sport if count < 5 %}
+                                        {% set count = count +1 %}
+                                        {% if count == 1 %}
+                                            <a href="{{ path('post',{'id':post.id}) }}">
+                                                <!--img src="{{ post.mainImage }}" width="100%"-->
+                                                <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                            </a>
+                                            <ul>
+                                                <li class="border_bottom_1">
+                                                    <a href="{{ path('post',{'id':post.id}) }}">{{  post.title }}</a>
+                                                </li>
+                                        {% elseif count > 0 and count < 5 %}
+                                                <li class="border_bottom_1">
+                                                    <a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a>
+                                                </li>
+                                        {% else %}
+                                                <li>
+                                                    <a href="{{ path('post',{'id':post.id}) }}">{{ post.title }}</a>
+                                                </li>
+
+                                            </ul>
 
 
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                {% if sport|length > 5 %}
-                                                    <br><br>
-                                                    <div style="text-align: center;" class="alert alert-info">للمزيد من الأخبار الرياضية <a href="{{ path('type',{'type':'رياضة'}) }}">اضغط هنا</a> </div>
-                                                {% endif %}
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    {% if sport|length > 5 %}
+                                                        <br><br>
+                                                        <div style="text-align: center;" class="alert alert-info">للمزيد من الأخبار الرياضية <a href="{{ path('type',{'type':'رياضة'}) }}">اضغط هنا</a> </div>
+                                                    {% endif %}
+                                                </div>
+
                                             </div>
-
-                                        </div>
-                                    {% endif %}
-                                {% endfor %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
                             </div>
-                        </div>
-
+                        {% else %}
+                            <div class="row">
+                                <div class="col-sm-5 f_1">
+                                    <h3 class="alert alert-danger">لا يوجد أخبار رياضية حاليا!! الرجاء العودة لاحقا لمتابعة المستجدات</h3>
+                                </div>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

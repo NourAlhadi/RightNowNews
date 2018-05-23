@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Message;
 use AppBundle\Form\MessageType;
 use AppBundle\Form\UserType;
+use AppBundle\Service\FileUploader;
 use AppBundle\Service\FilterNews;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -23,9 +24,6 @@ class DefaultController extends Controller
      */
     public function postAction($id, FilterNews $filter){
         $user = $this->getUser();
-        $user->setFname("Nour Alhadi");
-        $userManager = $this->get('fos_user.user_manager');
-        $userManager->updateUser($user);
 
         $em = $this->getDoctrine()->getManager();
         $post = $em->getRepository('AppBundle:news')->findOneBy(['id'=>$id]);
@@ -33,13 +31,33 @@ class DefaultController extends Controller
             return $this->render('default/error404.html.twig');
         }
 
+
+        if ($user != null){
+            $id = $post->getType()[0]->getId();
+            $user->incLog($id);
+            $userManger = $this->get('fos_user.user_manager');
+            $userManger->updateUser($user);
+        }
+
         $news = $em->getRepository('AppBundle:news')->findBy([],['date'=>'DESC']);
         $filter->setNewsSet($news);
         $hot = $filter->filter_hot_news();
 
+
+        $type = $post->getType()[0]->getName();
+        $type = $em->getRepository('AppBundle:type')->findOneBy(['name'=>$type]);
+        $related = $filter->filter_by_type($type);
+        $filter->setNewsSet($related);
+        $related = $filter->filter_by_tags($post->getTag());
+        $filter-> setNewsSet($related);
+        $related = $filter->exclude($post->getId());
+
+        dump($related);
+
         return $this->render('default/post.html.twig',[
-            "id" => $id,
+            "post" => $post,
             "hot"=>$hot,
+            "related" => $related
         ]);
     }
 
@@ -303,14 +321,27 @@ class DefaultController extends Controller
 
     /**
      * @Route("/profile/info/edit/",name="edit_profile")
+     * @Route("/profile/info/edit/",name="fos_user_profile_edit")
      */
-    public function editAction(Request $request){
+    public function editAction(Request $request,FileUploader $uploader){
 
         $user = $this->getUser();
+
+
+        if ($user == null){
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+
         $form = $this->createForm(UserType::class,$user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+
+            if ($user->getAvatar() != null){
+                $user->setAvatar($uploader->upload($user->getAvatar()));
+            }
+
 
             $this->get('fos_user.user_manager')->updateUser($user);
 
@@ -324,10 +355,15 @@ class DefaultController extends Controller
     }
     /**
      * @Route("/profile/info/change-password/",name="change_password")
+     * @Route("/profile/info/change-password/",name="fos_user_change_password")
      */
     public function passwordAction(Request $request){
 
         $user = $this->getUser();
+
+        if ($user == null){
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
 
         $defaultData = array('id' => 1);
         $form = $this->createFormBuilder($defaultData)

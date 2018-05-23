@@ -19,7 +19,8 @@ class UserType extends AbstractType
         $builder
             ->add('avatar',FileType::class, array(
                 'label' => 'الصورة الشخصية: ',
-                'required' => false
+                'required' => false,
+                'data_class' => null
             ))
             ->add('fname', TextType::class, array(
                 'label' => 'الاسم الأول: ',

@@ -12,7 +12,9 @@
             <a href="{{ path('post',{'id':news[rnd].id}) }}">
                 <div class="regions_1 text-center">
                     <h2> ما يحدث الآن في العالم</h2>
-                    <p>{{ news[rnd].title }}</p>
+                    {% if news|length > 0 %}
+                        <p>{{ news[rnd].title }}</p>
+                    {% endif %}
                 </div>
             </a>
         </div>
@@ -20,63 +22,70 @@
     <div class="row">
         <div class="col-sm-12 politics_main_5">
             <div class="col-sm-1"></div>
-            <div class="col-sm-10">
-                <div id="transition-timer-carousel" class="carousel slide transition-timer-carousel" data-ride="carousel">
 
-                    <!-- Indicators -->
-                    <ol class="carousel-indicators">
-                        {% set idx = 0 %}
-                        {% for post in news if idx < 10 %}
-                            {% if idx == 0 %}
-                                <li data-target="#transition-timer-carousel" data-slide-to="0" class="active"></li>
-                            {% else %}
-                                <li data-target="#transition-timer-carousel" data-slide-to="{{ idx }}"></li>
-                            {% endif %}
-                            {% set idx = idx + 1 %}
-                        {% endfor %}
-                    </ol>
+            {% if news|length > 0 %}
+                <div class="col-sm-10">
+                    <div id="transition-timer-carousel" class="carousel slide transition-timer-carousel" data-ride="carousel">
 
-                    <!-- Wrapper for slides -->
-                    <div class="carousel-inner">
+                        <!-- Indicators -->
+                        <ol class="carousel-indicators">
+                            {% set idx = 0 %}
+                            {% for post in news if idx < 10 %}
+                                {% if idx == 0 %}
+                                    <li data-target="#transition-timer-carousel" data-slide-to="0" class="active"></li>
+                                {% else %}
+                                    <li data-target="#transition-timer-carousel" data-slide-to="{{ idx }}"></li>
+                                {% endif %}
+                                {% set idx = idx + 1 %}
+                            {% endfor %}
+                        </ol>
 
-                        {% set idx = 0 %}
-                        {% for post in news if idx < 10 %}
-                            {% if idx == 0 %}
-                                <div class="item active">
-                                    <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
-                                    <div class="carousel-caption">
-                                        <a href="{{ path('post',{'id':post.id}) }}" >
-                                            <h1 class="carousel-caption-header">{{ post.title }}</h1>
-                                        </a>
-                                        <p class="carousel-caption-text hidden-sm hidden-xs"></p>
+                        <!-- Wrapper for slides -->
+                        <div class="carousel-inner">
+
+                            {% set idx = 0 %}
+                            {% for post in news if idx < 10 %}
+                                {% if idx == 0 %}
+                                    <div class="item active">
+                                        <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                        <div class="carousel-caption">
+                                            <a href="{{ path('post',{'id':post.id}) }}" >
+                                                <h1 class="carousel-caption-header">{{ post.title }}</h1>
+                                            </a>
+                                            <p class="carousel-caption-text hidden-sm hidden-xs"></p>
+                                        </div>
                                     </div>
-                                </div>
-                            {% else %}
-                                <div class="item">
-                                    <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
-                                    <div class="carousel-caption">
-                                        <a href="{{ path('post',{'id':post.id}) }}" >
-                                            <h1 class="carousel-caption-header">{{ post.title }}</h1>
-                                        </a>
-                                        <p class="carousel-caption-text hidden-sm hidden-xs"></p>
+                                {% else %}
+                                    <div class="item">
+                                        <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                        <div class="carousel-caption">
+                                            <a href="{{ path('post',{'id':post.id}) }}" >
+                                                <h1 class="carousel-caption-header">{{ post.title }}</h1>
+                                            </a>
+                                            <p class="carousel-caption-text hidden-sm hidden-xs"></p>
+                                        </div>
                                     </div>
-                                </div>
-                            {% endif %}
-                            {% set idx = idx + 1 %}
-                        {% endfor %}
+                                {% endif %}
+                                {% set idx = idx + 1 %}
+                            {% endfor %}
 
 
+                        </div>
+
+                        <!-- Controls -->
+                        <a class="left carousel-control" href="http://bootsnipp-env.elasticbeanstalk.com/iframe/yjX1#transition-timer-carousel" data-slide="prev">
+                            <span class="glyphicon glyphicon-chevron-left"></span>
+                        </a>
+                        <a class="right carousel-control" href="http://bootsnipp-env.elasticbeanstalk.com/iframe/yjX1#transition-timer-carousel" data-slide="next">
+                            <span class="glyphicon glyphicon-chevron-right"></span>
+                        </a>
                     </div>
-
-                    <!-- Controls -->
-                    <a class="left carousel-control" href="http://bootsnipp-env.elasticbeanstalk.com/iframe/yjX1#transition-timer-carousel" data-slide="prev">
-                        <span class="glyphicon glyphicon-chevron-left"></span>
-                    </a>
-                    <a class="right carousel-control" href="http://bootsnipp-env.elasticbeanstalk.com/iframe/yjX1#transition-timer-carousel" data-slide="next">
-                        <span class="glyphicon glyphicon-chevron-right"></span>
-                    </a>
                 </div>
-            </div>
+            {% else %}
+                <div class="col-sm-10">
+                    <h1 class="alert alert-danger">لا يوجد أخبار عاجلة عالمية حاليا!!</h1>
+                </div>
+            {% endif %}
         </div>
     </div>
 

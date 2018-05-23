@@ -1,12 +1,129 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    RNN - {{ id }}
+    RNN - {{ post.title }}
 {% endblock %}
 
 {% block body %}
 
-    <h1> POST NUMBER {{ id }}</h1>
+    <!-- Page Content -->
+    <div class="container">
+
+        <div class="row">
+
+            <!-- Blog Post Content Column -->
+            <div class="col-lg-8 col-md-12" style="float: right">
+
+                <!-- Blog Post -->
+
+                <!-- Title -->
+                <h1>{{ post.title }}</h1>
+
+                <!-- Author
+                <p class="lead">
+                    by <a href="#">Start Bootstrap</a>
+                </p> -->
+
+                <hr>
+
+                <!-- Date/Time -->
+                <p><span class="glyphicon glyphicon-time"></span> خبر بتاريخ {{ post.date|date('Y-m-d') }} الساعة {{ post.date|date('H:i') }}</p>
+
+                <hr>
+
+                <!-- Preview Image -->
+                {% if post.mainImage is null or post.mainImage == '' %}
+                    <img class="img-responsive" src="http://placehold.it/900x300" alt="">
+                {% else %}
+                    <img class="img-responsive" src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" alt="">
+                {% endif %}
+                <hr>
+
+                <!-- Post Content -->
+                <!--p class="lead">Lorem minus inventore?</p-->
+                <p style="font-size: 18px">{{ post.post|nl2br }}</p>
+
+                <hr>
+
+                <!-- Blog Comments -->
+
+                <!-- Comments Form -->
+                <div class="well">
+                    <h4>تفاعل مع الخبر من خلال كتابة تعليق:</h4>
+                    <form role="form">
+                        <div class="form-group">
+                            <textarea class="form-control" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">إرسال</button>
+                    </form>
+                </div>
+
+                <hr>
+
+                <!-- Posted Comments -->
+
+                <!-- Comment -->
+                <div class="media">
+                    <div class="media-body">
+                        <h4 class="media-heading">Start Bootstrap
+                            <small>August 25, 2014 at 9:30 PM</small>
+                        </h4>
+                        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+                    </div>
+                </div>
+
+
+                <hr>
+            </div>
+
+
+            <div class="col-lg-0 col-md-3"></div>
+
+            <!-- Blog Sidebar Widgets Column -->
+            <div class="col-lg-4 col-md-9" style="float: left">
+
+                <!-- Blog Search Well -->
+                <div class="well">
+                    <h4>أخبار متعلقة: </h4>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="list-unstyled">
+                                {% for post in related %}
+                                    <li><a href="{{ path('post',{'id':post.id}) }}"> {{ post.title }} </a></li>
+                                    <hr>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Categories Well -->
+                <div class="well">
+                    <h4>وسوم الخبر: </h4>
+                    <div class="row">
+                        <div class="col-lg-0 col-md-3"></div>
+                        <div class="col-lg-12 col-md-9">
+                            <ul class="list-unstyled">
+                                {% if post.tag|length == 0 %}
+                                    <li class="alert alert-info"> هذا الخبر غير مربوط بأي وسم!! </li>
+                                {% else %}
+                                    {% for tag in post.tag %}
+                                        <li><a href="#"> {{ tag.name }} </a></li>
+                                    {% endfor %}
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- /.row -->
+                </div>
+
+            </div>
+
+            <div style="clear: both"></div>
+
+        </div>
+    </div>
+
 
 {% endblock %}
 

@@ -112,4 +112,51 @@ class FilterNews{
         return $ret;
     }
 
+    public function filter_by_tags($tag){
+        $arr = [];
+        for ($i = 0; $i < sizeof($tag); $i++){
+            if ($tag[$i] == null) continue;
+            $name = $tag[$i]->getName();
+            array_push($arr,$name);
+        }
+        $ret = [];
+        $used = [];
+        for ($i = 0; $i < sizeof($this->news_set); $i++){
+            $news = $this->news_set[$i];
+            $tags = $news->getTag();
+            for ($j = 0; $j < sizeof($tags); $j++){
+                if ($tag[$j] == null) continue;
+                $name = $tag[$j]->getName();
+                if (in_array($name,$arr)){
+                    array_push($ret,$news);
+                    array_push($used,$news->getId());
+                    break;
+                }
+            }
+        }
+        if (sizeof($ret) < 4){
+            $cnt = 0;
+            for ($i = 0; $i < sizeof($this->news_set); $i++){
+                if ($cnt >= 4) break;
+                $news = $this->news_set[$i];
+                $id = $news->getId();
+                if (in_array($id,$used)) continue;
+                $cnt++;
+                array_push($ret,$news);
+            }
+        }
+        return $ret;
+    }
+
+    public function exclude($id){
+        $news = $this->news_set;
+        $ret = [];
+        for ($i = 0; $i < sizeof($news); $i++){
+            $post = $news[$i];
+            if ($post->getId() == $id) continue;
+            array_push($ret,$post);
+        }
+        return $ret;
+    }
+
 }

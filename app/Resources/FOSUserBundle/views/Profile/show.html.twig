@@ -14,7 +14,7 @@
                 <h1> هذا مايوجد في ملفك الشخصي </h1>
 
                 {% if user.avatar != "" %}
-                    <img class="img-circle" src="{{ user.avatar }}">
+                    <img class="img-circle" src="{{ asset('uploads/') }}{{ user.avatar }}">
                 {% else %}
                     <img class="img-circle" src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg">
                 {% endif %}
@@ -44,6 +44,27 @@
 
             <div class="col-sm-3 col-xs-1"></div>
         </div>
+
+
+
+        <div class="row">
+
+            <div class="col-xs-1"></div>
+
+
+            <div class="col-xs-10 item">
+                <h1> سجل تصفح الأخبار حسب النوع </h1>
+
+                <canvas id="myChart" width="auto" height="auto"></canvas>
+
+            </div>
+
+
+            <div class="col-xs-1"></div>
+
+        </div>
+
+
     </div>
 
 {% endblock %}
@@ -125,4 +146,52 @@
         }
 
     </style>
+{% endblock %}
+
+{% block javascripts %}
+
+    <script>
+        var ctx = document.getElementById("myChart");
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["سياسة", "اقتصاد", "رياضة", "تكنولوجيا", "فنون", "علوم" , "موضة" , "منوع"],
+                datasets: [{
+                    label: 'عدد الأخبار من هذا النوع',
+                    data: [{{ user.log[1] }}, {{ user.log[2] }}, {{ user.log[3] }}, {{ user.log[4] }},
+                        {{ user.log[5] }}, {{ user.log[6] }},{{ user.log[7] }},{{ user.log[8] }}],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(155, 209, 64, 0.2)',
+                        'rgba(52, 9, 164, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(155, 209, 64, 1)',
+                        'rgba(52, 9, 164, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
 {% endblock %}
