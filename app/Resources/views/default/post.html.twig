@@ -50,12 +50,13 @@
                 <!-- Comments Form -->
                 <div class="well">
                     <h4>تفاعل مع الخبر من خلال كتابة تعليق:</h4>
-                    <form role="form">
-                        <div class="form-group">
-                            <textarea class="form-control" rows="3"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">إرسال</button>
-                    </form>
+                    {{ form_start(form) }}
+                            <div class="form-group">
+                                {{ form_widget(form.body,{'attr':{'class':'form-control'} }) }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">إرسال</button>
+                    {{ form_end(form) }}
+
                 </div>
 
                 <hr>
@@ -63,15 +64,37 @@
                 <!-- Posted Comments -->
 
                 <!-- Comment -->
-                <div class="media">
-                    <div class="media-body">
-                        <h4 class="media-heading">Start Bootstrap
-                            <small>August 25, 2014 at 9:30 PM</small>
-                        </h4>
-                        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                    </div>
-                </div>
+                {% for comment in post.comments %}
+                    <div class="media">
+                        <div class="media-body">
+                            {% if is_granted('ROLE_USER')%}
+                                {% if app.user == comment.writer[0] %}
+                                    <a href="{{ path('delete_comment',{"post":post.id,"comment":comment.id}) }}">
+                                        <button class="pull-left btn btn-danger">X</button>
+                                    </a>
+                                {% endif %}
+                            {% endif %}
 
+                            <h4 class="media-heading">
+
+                                {% if comment.writer[0] is null%}
+                                    <!---->زائر للموقع
+                                {% else %}
+                                    {% set name = comment.writer[0].fname ~ " " ~ comment.writer[0].lname %}
+                                    {% if name == " " %}
+                                        {% set name = comment.writer[0].username %}
+                                    {% endif %}
+                                    {{ name }}
+                                {% endif %}
+
+                                <small>بتاريخ {{ comment.date|date('Y-m-d') }} الساعة {{ comment.date|date('H:i') }}</small>
+                            </h4>
+
+                            <p style="font-size: 15px; font-weight: bold">{{ comment.body }}</p>
+                        </div>
+                    </div>
+
+                {% endfor %}
 
                 <hr>
             </div>
@@ -131,6 +154,11 @@
     <style>
         .content *{
             direction: rtl;
+        }
+        .btn-danger{
+            background-color: #C00!important;
+            height: 35px!important;
+            width: 35px!important;
         }
     </style>
 {% endblock %}

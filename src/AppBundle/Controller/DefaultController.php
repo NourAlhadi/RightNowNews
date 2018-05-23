@@ -2,7 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Comment;
 use AppBundle\Entity\Message;
+use AppBundle\Form\CommentType;
 use AppBundle\Form\MessageType;
 use AppBundle\Form\UserType;
 use AppBundle\Service\FileUploader;
@@ -22,7 +24,7 @@ class DefaultController extends Controller
      * @param integer $id
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function postAction($id, FilterNews $filter){
+    public function postAction(Request $request, $id, FilterNews $filter){
         $user = $this->getUser();
 
         $em = $this->getDoctrine()->getManager();
@@ -52,13 +54,54 @@ class DefaultController extends Controller
         $filter-> setNewsSet($related);
         $related = $filter->exclude($post->getId());
 
-        dump($related);
+
+
+        $comment  = new Comment();
+        $form = $this->createForm(CommentType::class,$comment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $comment->setDate(new \DateTime('now'));
+            $comment->setWriter($user);
+
+            $post->setComments($comment);
+            $em->persist($comment);
+            $em->persist($post);
+            $em->flush();
+
+            return $this->redirectToRoute('post',["id"=>$post->getId()]);
+        }
 
         return $this->render('default/post.html.twig',[
             "post" => $post,
             "hot"=>$hot,
-            "related" => $related
+            "related" => $related,
+            "form" => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/post/{post}/comment/{comment}/delete",name="delete_comment")
+     */
+    public function deleteAction($post,$comment){
+
+        $em = $this->getDoctrine()->getManager();
+
+        $id = $post;
+        $post = $em->getRepository('AppBundle:news');
+        $post = $post->findOneBy(['id'=>$id]);
+
+        $cid = $comment;
+        $comment = $em->getRepository('AppBundle:Comment');
+        $comment = $comment->findOneBy(['id'=>$cid]);
+
+
+        $post->removeComment($comment);
+        $em->persist($post);
+        $em->flush();
+
+        return $this->redirectToRoute('post',["id"=>$id]);
     }
 
     /**

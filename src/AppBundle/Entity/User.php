@@ -145,4 +145,12 @@ class User extends BaseUser
         $this->types = $types;
     }
 
+
+    public function __toString()
+    {
+        $name = $this->fname . " " . $this->lname;
+        if ($name == " ") $name = $this->username;
+        return $name;
+    }
+
 }

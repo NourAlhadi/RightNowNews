@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\AppBundle;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
@@ -86,6 +87,33 @@ class news
      * @ORM\Column(type="boolean", options={"default":"0"})
      */
     private $isHot;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Comment")
+     */
+    private $comments;
+
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    public function setComments($comments)
+    {
+        $this->comments[] = $comments;
+    }
+
+
+    public function removeComment(Comment $comment): self
+    {
+
+        if ($this->comments->contains($comment)) {
+            $this->comments->removeElement($comment);
+        }
+
+        return $this;
+    }
+
 
     /**
      * @return boolean
@@ -288,6 +316,10 @@ class news
     public function setType($type)
     {
         $this->type = $type;
+    }
+
+    public function __construct(){
+        $this->comments = new ArrayCollection();
     }
 }
 
