@@ -17,6 +17,10 @@
         </div>
     {% endif %}
 
+    {{ form_widget(form.fname, { 'attr': {'class': 'form-control', 'placeholder': 'الاسم الأول', 'required':'true'  } }) }}
+
+    {{ form_widget(form.lname, { 'attr': {'class': 'form-control', 'placeholder': 'الاسم الثاني', 'required':'true'   } }) }}
+
     {{ form_widget(form.plainPassword.first, { 'attr': {'class': 'form-control', 'placeholder': 'كلمة المرور' } }) }}
 
     {{ form_widget(form.plainPassword.second, { 'attr': {'class': 'form-control', 'placeholder': 'تأكيد كلمة المرور'  } }) }}
@@ -26,9 +30,104 @@
         </div>
     {% endif %}
 
+    <div class="types">
+        {{ form_label(form.types) }}
+
+        {% for type in form.types %}
+            <div class="wrapper">
+                {{ form_widget(type) }}
+                {{ form_label(type) }}
+            </div>
+        {% endfor %}
+    </div>
+
 
     <div>
         <input style="display: inline" type="submit" value="تسجيل" />
         <input style="display: inline" class="form-control" type="reset" value="مسح البيانات" />
     </div>
 {{ form_end(form) }}
+
+
+<style>
+    .types{
+        margin: 20px auto;
+    }
+
+    .wrapper{
+        display: inline;
+        margin: 10px 7px;
+    }
+
+    /* Basic styles */
+    .wrapper input[type="checkbox"]{
+        position: absolute;
+        opacity: 0;
+        z-index: -1;
+    }
+
+
+
+    label{
+        font-size:16px;
+        font-weight: bold;
+    }
+
+    .wrapper label {
+        position: relative;
+        display: inline-block;
+        padding: 0 0 0 2em;
+        height: 1.5em;
+        line-height: 1.5;
+        cursor: pointer;
+        font-size:14px;
+        font-weight: normal;
+    }
+
+    .wrapper label::before,
+    .wrapper label::after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: block;
+        width: 1.5em;
+        height: 1.5em;
+    }
+    .wrapper label::before {
+        content: " ";
+        border: 2px solid #bdc3c7;
+        border-radius: 20%;
+    }
+    /* Checkbox */
+    .wrapper input[type="checkbox"] + label::after {
+        content: "\2714";
+        color: #2c3e50;
+        line-height: 1.5;
+        text-align: center;
+    }
+    /* :checked */
+    .wrapper input[type="checkbox"]:checked + label::before,
+    input[type="radio"]:checked + label::before {
+        background: #fff;
+        border-color: #fff;
+    }
+    .wrapper input[type="checkbox"] + label::after{
+        -webkit-transform: scale(0);
+        -ms-transform: scale(0);
+        -o-transform: scale(0);
+        transform: scale(0);
+    }
+    .wrapper input[type="checkbox"]:checked + label::after{
+        -webkit-transform: scale(1);
+        -ms-transform: scale(1);
+        -o-transform: scale(1);
+        transform: scale(1);
+    }
+    /* Transition */
+    .wrapper label::before,
+    .wrapper label::after {
+        -webkit-transition: .25s all ease;
+        -o-transition: .25s all ease;
+        transition: .25s all ease;
+    }
+</style>
