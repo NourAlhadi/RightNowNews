@@ -33,6 +33,9 @@
         body{
             margin-top: 0!important;
         }
+        #page-wrapper{
+            min-height: 600px!important;
+        }
     </style>
 
     {% block stylesheets %}
@@ -70,7 +73,7 @@
                     <a href="{{ path('admin_default_index') }}"><i class="fa fa-fw fa-dashboard"></i>&nbsp;&nbsp; لوحة التحكم  </a>
                 </li>
                 <li class="{% block nActive %} {% endblock %}">
-                    <a href=""><i class="fa fa-fw fa-newspaper-o"></i>&nbsp;&nbsp; أخبار </a>
+                    <a href="{{ path('admin_news') }}"><i class="fa fa-fw fa-newspaper-o"></i>&nbsp;&nbsp; أخبار </a>
                 </li>
                 <li class="{% block tActive %} {% endblock %}">
                     <a href=""><i class="fa fa-fw fa-tags"></i>&nbsp;&nbsp; وسوم </a>
@@ -88,7 +91,7 @@
         </div>
         <!-- /.navbar-collapse -->
     </nav>
-    <br>
+    <br><br>
 
     {% block body %}
 
@@ -96,10 +99,7 @@
 </div>
 <!-- /#wrapper -->
 
-{% block javascripts %}
 
-
-{% endblock %}
 
 <!-- jQuery -->
 <script src="{{ asset('Assets/js/jquery-2.1.1.min.js') }}"></script>
@@ -107,10 +107,16 @@
 <!-- Bootstrap Core JavaScript -->
 <script src="{{ asset('Assets/js/bootstrap.min.js') }}"></script>
 
-<!-- Morris Charts JavaScript -->
+<!-- Morris Charts JavaScript >
 <script src="{{ asset('Assets/js/plugins/morris/raphael.min.js') }}"></script>
 <script src="{{ asset('Assets/js/plugins/morris/morris.min.js') }}"></script>
-<script src="{{ asset('Assets/js/plugins/morris/morris-data.js') }}"></script>
+<script src="{{ asset('Assets/js/plugins/morris/morris-data.js') }}"></script-->
+
+
+{% block javascripts %}
+
+
+{% endblock %}
 
 </body>
 

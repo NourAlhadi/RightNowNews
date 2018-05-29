@@ -34,6 +34,8 @@ services:
     AppBundle\Service\FileUploader:
             arguments:
                 $targetDir: '%uploads_directory%'
+            public: true
+
 
     AppBundle\Service\FilterNews:
 

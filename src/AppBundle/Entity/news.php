@@ -66,12 +66,6 @@ class news
      */
     private $secondImage;
 
-    /**
-     * @var \AppBundle\Entity\tag
-     *
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\tag")
-     */
-    private $tag;
 
 
     /**
@@ -92,6 +86,12 @@ class news
      * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Comment")
      */
     private $comments;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\tag")
+     */
+    private $tag;
+
 
     public function getComments()
     {
@@ -114,6 +114,9 @@ class news
         return $this;
     }
 
+    public function addTag(Tag $tag){
+        array_push($this->getTag(),$tag);
+    }
 
     /**
      * @return boolean
@@ -286,20 +289,14 @@ class news
     }
 
 
-    /**
-     * @return \AppBundle\Entity\tag
-     */
     public function getTag()
     {
         return $this->tag;
     }
 
-    /**
-     * @param \AppBundle\Entity\tag $tag
-     */
     public function setTag($tag)
     {
-        $this->tag = $tag;
+        $this->tag[] = $tag;
     }
 
     /**
@@ -320,6 +317,11 @@ class news
 
     public function __construct(){
         $this->comments = new ArrayCollection();
+        $this->tag = new  ArrayCollection();
+    }
+
+    public function clearTag(){
+        $this->tag = new ArrayCollection();
     }
 }
 
