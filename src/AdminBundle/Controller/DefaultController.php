@@ -2,7 +2,9 @@
 
 namespace AdminBundle\Controller;
 
+use AdminBundle\Service\Helper;
 use AppBundle\Entity\news;
+use AppBundle\Entity\tag;
 use AppBundle\Form\newsType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -100,34 +102,63 @@ class DefaultController extends Controller
         $em = $this->getDoctrine()->getManager();
         if ($form->isSubmitted() && $form->isValid()){
 
-            /*$news->setMainImage($uploader->upload($news->getMainImage()));
-
+            $news->setMainImage($uploader->upload($news->getMainImage()));
             if ($news->getSecondImage() != null){
                 $news->setSecondImage($uploader->upload($news->getSecondImage()));
             }
-            $news->setDate(new \DateTime('now'));
-            $news->setTag(null);
+
+
+            // title - location - date - post - main_image - second_image - is_hot
+            // news_tag / news_type
+
+            $em = $this->getDoctrine();
+            $connection = $em->getConnection();
+            $statement = $connection->prepare("insert into news values(null,:title,:location,CURRENT_TIMESTAMP,:post,:main_image,:second_image,:is_hot);");
+            if ($news->getisHot() !== true) $news->setIsHot(0);
+            $statement->bindValue('title', $news->getTitle());
+            $statement->bindValue('location', $news->getLocation());
+            $statement->bindValue('post', $news->getPost());
+            $statement->bindValue('main_image', $news->getMainImage());
+            $statement->bindValue('second_image', $news->getSecondImage());
+            $statement->bindValue('is_hot', $news->getisHot());
+            $statement->execute();
+
+            $id = $em->getRepository('AppBundle:news')->findOneBy([],["id"=>"DESC"])->getId();
+            $statement = $connection->prepare("insert into news_type values(:news_id,:type_id);");
+            $statement->bindValue('news_id',$id);
+            $statement->bindValue('type_id',$news->getType()->getId());
+            $statement->execute();
+
+
+            $tags = explode(" ",$news->getTag()[0]);
+
+            $tid = [];
+
+            $checker = new Helper();
             $em = $this->getDoctrine()->getManager();
-
-
-            /*$tags = explode(" ",$news->getTag()[0]);
-            $news->clearTag();
-
-
+            $checker->setEntityManager($em);
             for ($i = 0; $i < sizeof($tags); $i++){
                 if ($tags[$i] == "" || $tags[$i] == " ") continue;
+                array_push($tid,$tags[$i]);
+                if ($checker->check($tags[$i]) == true) continue;
                 $tag = new Tag();
                 $tag->setName($tags[$i]);
-                $news->addTag($tag);
                 $em->persist($tag);
+                $em->flush();
             }
 
-            dump($news);*/
+            for ($i = 0; $i < sizeof($tid); $i++){
+                $name = $tid[$i];
+                dump($name);
+                $tgid = $checker->getTagId($name);
+                $statement = $connection->prepare("insert into news_tag values(:news_id,:tag_id);");
+                $statement->bindValue('news_id',$id);
+                $statement->bindValue('tag_id',$tgid);
+                $statement->execute();
+            }
 
-            $em->persist($news);
-            $em->flush();
 
-            return $this->redirectToRoute($this->generateUrl('admin_news'));
+            return $this->redirectToRoute('admin_news');
         }
 
 
