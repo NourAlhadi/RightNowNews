@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -53,7 +52,7 @@ class DefaultController extends Controller
     public function newsAction(){
         $em = $this->getDoctrine()->getManager();
         $news = $em->getRepository('AppBundle:news')->findBy([],['date'=>'DESC']);
-        $news = array_slice($news,0, 1);
+        $news = array_slice($news,0, 25);
 
         return $this->render('@Admin/Default/news.html.twig',[
            "news"=>$news,
@@ -149,7 +148,6 @@ class DefaultController extends Controller
 
             for ($i = 0; $i < sizeof($tid); $i++){
                 $name = $tid[$i];
-                dump($name);
                 $tgid = $checker->getTagId($name);
                 $statement = $connection->prepare("insert into news_tag values(:news_id,:tag_id);");
                 $statement->bindValue('news_id',$id);
@@ -165,5 +163,122 @@ class DefaultController extends Controller
         return $this->render('@Admin/Default/news_form.html.twig',[
             "form"=>$form->createView()
         ]);
+    }
+
+
+    /**
+     * @Route("/admin/news/update/{id}", name="admin_news_update")
+     */
+    public function updateNewsAction(Request $request,$id){
+
+        $uploader = $this->get('AppBundle\Service\FileUploader');
+        $em = $this->getDoctrine()->getManager();
+
+        $news = $em->getRepository('AppBundle:news')->findOneBy(['id'=>$id]);
+        if ($news == null) return $this->redirectToRoute('admin_news');
+
+        $post = new news();
+        $form = $this->createForm(newsType::class,$post);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()){
+
+
+            $post->setMainImage($uploader->upload($post->getMainImage()));
+            if ($post->getSecondImage() != null){
+                $post->setSecondImage($uploader->upload($post->getSecondImage()));
+            }
+
+            $news = $post;
+
+            // title - location - date - post - main_image - second_image - is_hot
+            // news_tag / news_type
+
+            $em = $this->getDoctrine();
+            $connection = $em->getConnection();
+            $statement = $connection->prepare("update news set  title = :title, location = :location, post = :post,main_image = :main_image,second_image = :second_image,is_hot = :is_hot where id = :id;");
+            if ($news->getisHot() !== true) $news->setIsHot(0);
+            $statement->bindValue('title', $news->getTitle());
+            $statement->bindValue('location', $news->getLocation());
+            $statement->bindValue('post', $news->getPost());
+            $statement->bindValue('main_image', $news->getMainImage());
+            $statement->bindValue('second_image', $news->getSecondImage());
+            $statement->bindValue('is_hot', $news->getisHot());
+            $statement->bindValue('id', $id);
+            $statement->execute();
+
+
+            $statement = $connection->prepare("update news_type set type_id = :type_id where news_id = :news_id;");
+            $statement->bindValue('news_id',$id);
+            $statement->bindValue('type_id',$news->getType()->getId());
+            $statement->execute();
+
+
+            $tags = explode(" ",$news->getTag()[0]);
+
+            $tid = [];
+
+            $checker = new Helper();
+            $em = $this->getDoctrine()->getManager();
+            $checker->setEntityManager($em);
+            for ($i = 0; $i < sizeof($tags); $i++){
+                if ($tags[$i] == "" || $tags[$i] == " ") continue;
+                array_push($tid,$tags[$i]);
+                if ($checker->check($tags[$i]) == true) continue;
+                $tag = new Tag();
+                $tag->setName($tags[$i]);
+                $em->persist($tag);
+                $em->flush();
+            }
+
+            $statement = $connection->prepare("delete from news_tag where news_id = :news_id;");
+            $statement->bindValue('news_id',$id);
+            $statement->execute();
+
+            for ($i = 0; $i < sizeof($tid); $i++){
+                $name = $tid[$i];
+                $tgid = $checker->getTagId($name);
+                $statement = $connection->prepare("insert into news_tag values(:news_id,:tag_id);");
+                $statement->bindValue('news_id',$id);
+                $statement->bindValue('tag_id',$tgid);
+                $statement->execute();
+            }
+
+
+            return $this->redirectToRoute('admin_news');
+        }
+
+
+        return $this->render('@Admin/Default/news_form_update.html.twig',[
+            "form"=>$form->createView(),
+            "last"=>$news,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/news/delete/{id}", name="admin_news_delete")
+     */
+    public function deleteNewsAction($id){
+        $em = $this->getDoctrine()->getManager();
+        $news = $em->getRepository('AppBundle:news')->findOneBy(['id'=>$id]);
+        if ($news == null) return $this->redirectToRoute("admin_news");
+
+        $connection = $this->getDoctrine()->getConnection();
+        $sql = $connection->prepare("delete from news where id = :id;");
+        $sql->bindValue("id",$id);
+        $sql->execute();
+
+        $connection = $this->getDoctrine()->getConnection();
+        $sql = $connection->prepare("delete from news_type where news_id = :id;");
+        $sql->bindValue("id",$id);
+        $sql->execute();
+
+        $connection = $this->getDoctrine()->getConnection();
+        $sql = $connection->prepare("delete from news_tag where news_id = :id;");
+        $sql->bindValue("id",$id);
+        $sql->execute();
+
+
+        return $this->redirectToRoute("admin_news");
     }
 }

@@ -54,8 +54,8 @@
                                         <td> {{ post.comments|length }} </td>
                                         <td> {{ post.tag|length }} </td>
                                         <td>
-                                            <a href=""><button class="btn btn-danger"> تعديل </button> </a>
-                                            <a href=""><button class="btn btn-danger"> حذف </button> </a>
+                                            <a href="{{ path('admin_news_update',{'id':post.id}) }}"><button class="btn btn-danger"> تعديل </button> </a>
+                                            <a href="{{ path('admin_news_delete',{'id':post.id}) }}"><button class="btn btn-danger"> حذف </button> </a>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -154,7 +154,8 @@
                 success: function (data)
                 {
                     data = $.parseJSON(data.data);
-                    console.log(data[1]["type"]);
+                    console.log({{ news|length }});
+                    console.log(data.length);
                     for (var i ={{ news|length }};i < data.length; i++) {
                         var tp = "لا نوع محدد";
                         if (data[i]["type"][0] !== undefined){
@@ -168,7 +169,7 @@
                         line += "<td>" + data[i]["location"] + "</td>";
                         line += "<td>" + data[i]["comments"].length + "</td>";
                         line += "<td>" + data[i]["tag"].length + "</td>";
-                        line += "<td><a href=''><button class='btn btn-danger'> تعديل </button> </a><a href=''><button class='btn btn-danger'> حذف </button> </a></td></tr>";
+                        line += "<td><a href='/admin/news/update/"  + data[i]["id"] + " '><button class='btn btn-danger'> تعديل </button> </a><a href='/admin/news/delete/"  + data[i]["id"] + " '><button class='btn btn-danger'> حذف </button> </a></td></tr>";
 
                             jQuery("#tbody").append(line);
                     }
