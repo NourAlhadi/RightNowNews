@@ -76,17 +76,20 @@
                     <a href="{{ path('admin_news') }}"><i class="fa fa-fw fa-newspaper-o"></i>&nbsp;&nbsp; أخبار </a>
                 </li>
                 <li class="{% block tActive %} {% endblock %}">
-                    <a href=""><i class="fa fa-fw fa-tags"></i>&nbsp;&nbsp; وسوم </a>
+                    <a href="{{ path('admin_tags') }}"><i class="fa fa-fw fa-tags"></i>&nbsp;&nbsp; وسوم </a>
                 </li>
                 <li class="{% block uActive %} {% endblock %}">
-                    <a href=""><i class="fa fa-fw fa-user"></i> &nbsp;&nbsp;مستخدمين </a>
+                    <a href="{{ path('admin_users') }}"><i class="fa fa-fw fa-user"></i> &nbsp;&nbsp;مستخدمين </a>
                 </li>
 
                 {% if is_granted('ROLE_SUPER_ADMIN') %}
                     <li class="{% block aActive %} {% endblock %}">
-                        <a href=""><i class="fa fa-fw fa-user-secret"></i>&nbsp;&nbsp;  مشرفين</a>
+                        <a href="{{ path('admin_admins') }}"><i class="fa fa-fw fa-user-secret"></i>&nbsp;&nbsp;  مشرفين</a>
                     </li>
                 {% endif %}
+                <li class="{% block mActive %} {% endblock %}">
+                    <a href="{{ path('admin_messages') }}"><i class="fa fa-fw fa-envelope"></i>&nbsp;&nbsp;رسائل الموقع</a>
+                </li>
             </ul>
         </div>
         <!-- /.navbar-collapse -->

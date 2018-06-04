@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Comment;
 use AppBundle\Entity\Message;
+use AppBundle\Entity\tag;
 use AppBundle\Form\CommentType;
 use AppBundle\Form\MessageType;
 use AppBundle\Form\UserType;
@@ -26,14 +27,11 @@ class DefaultController extends Controller
      */
     public function postAction(Request $request, $id, FilterNews $filter){
         $user = $this->getUser();
-
         $em = $this->getDoctrine()->getManager();
         $post = $em->getRepository('AppBundle:news')->findOneBy(['id'=>$id]);
         if (is_null($post)){
             return $this->render('default/error404.html.twig');
         }
-
-
         if ($user != null){
             $id = $post->getType()[0]->getId();
             $user->incLog($id);
@@ -44,8 +42,6 @@ class DefaultController extends Controller
         $news = $em->getRepository('AppBundle:news')->findBy([],['date'=>'DESC']);
         $filter->setNewsSet($news);
         $hot = $filter->filter_hot_news();
-
-
         $type = $post->getType()[0]->getName();
         $type = $em->getRepository('AppBundle:type')->findOneBy(['name'=>$type]);
         $related = $filter->filter_by_type($type);
@@ -54,22 +50,16 @@ class DefaultController extends Controller
         $filter-> setNewsSet($related);
         $related = $filter->exclude($post->getId());
 
-
-
         $comment  = new Comment();
         $form = $this->createForm(CommentType::class,$comment);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
-
             $comment->setDate(new \DateTime('now'));
             $comment->setWriter($user);
-
             $post->setComments($comment);
             $em->persist($comment);
             $em->persist($post);
             $em->flush();
-
             return $this->redirectToRoute('post',["id"=>$post->getId()]);
         }
 
@@ -104,12 +94,16 @@ class DefaultController extends Controller
         return $this->redirectToRoute('post',["id"=>$id]);
     }
 
+
+
     /**
      * @Route("/location/{location}",name="location")
      */
     public function locationAction($location, FilterNews $filter){
         $em = $this->getDoctrine()->getManager();
+
         $news = $em->getRepository('AppBundle:news')->findBy([],['date'=>'DESC']);
+
         $filter->setNewsSet($news);
         $news = $filter->filter_by_location($location);
 
@@ -119,6 +113,7 @@ class DefaultController extends Controller
 
         $allnews = $em->getRepository('AppBundle:news')->findBy([],['date'=>'DESC']);
         $filter->setNewsSet($allnews);
+
         $hot = $filter->filter_hot_news();
 
         return $this->render('default/list.html.twig',[
@@ -126,6 +121,10 @@ class DefaultController extends Controller
             "hot"=>$hot,
         ]);
     }
+
+
+
+
 
     /**
      * @Route("/news/{type}",name="type")
@@ -186,6 +185,35 @@ class DefaultController extends Controller
         if (sizeof($news) == 0){
             return $this->render('default/error404.html.twig');
         }
+
+        return $this->render('default/list.html.twig',[
+            "news"=>$news,
+            "hot"=>$hot,
+        ]);
+    }
+
+    /**
+     * @Route("/tag/{id}",name="news_tag")
+     */
+    public function tagAction($id,FilterNews $filter){
+        $em = $this->getDoctrine()->getManager();
+
+        $tag = $em->getRepository('AppBundle:tag')->findOneBy(['id'=>$id]);
+        if ($tag == null) return $this->render('default/error404.html.twig');
+
+        $news = $em->getRepository('AppBundle:news')->findBy([],['date'=>'DESC']);
+        $filter->setNewsSet($news);
+
+        $hot = $filter->filter_hot_news();
+
+        $tags = [];
+        array_push($tags,$tag);
+        $news = $filter->filter_by_tags($tags,true);
+
+        if (sizeof($news) == 0){
+            return $this->render('default/error404.html.twig');
+        }
+
 
         return $this->render('default/list.html.twig',[
             "news"=>$news,
@@ -306,24 +334,28 @@ class DefaultController extends Controller
     /**
      * @Route("/searcher/",name="searcher")
      *
-     * @Method("POST")
+     * @Method("GET")
      * @param Request $request
      * @param FilterNews $filter
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function searcherAction(Request $request, FilterNews $filter){
         $data = $request->get('query');
+        $classifier = $request->get('srs');
+        if ($classifier == null) $classifier = "title";
+
         $em = $this->getDoctrine()->getManager();
 
         $news = $em->getRepository('AppBundle:news')->findBy([],['date'=>'DESC']);
         $filter->setNewsSet($news);
         $hot = $filter->filter_hot_news();
 
+        $news = $filter->filter_by_title($data);
 
-
-        return $this->render('default/list.html.twig',[
+        return $this->render('default/search.html.twig',[
             "news" => $news,
             "hot" => $hot,
+            "data" => $data,
         ]);
     }
 
@@ -343,13 +375,9 @@ class DefaultController extends Controller
         $tech = $em->getRepository('AppBundle:type')->findOneBy(['name'=>'تكنولوجيا']);
 
         $filter->setNewsSet($news);
-
         $hot = $filter->filter_hot_news();
-
         $politics = $filter->filter_by_type($politics);
-
         $sport = $filter->filter_by_type($sport);
-
         $tech = $filter->filter_by_type($tech);
 
         return $this->render('default/index.html.twig', [

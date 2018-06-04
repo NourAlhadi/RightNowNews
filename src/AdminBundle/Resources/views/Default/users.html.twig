@@ -1,0 +1,152 @@
+{% extends '@Admin/base.html.twig' %}
+
+{% block uActive %} active {% endblock %}
+{% block body %}
+    <div id="page-wrapper">
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">المستخدمين</h1>
+                    <ol class="breadcrumb">
+                        <li class="active">
+                            <i class="fa fa-user"></i> المستخدمين
+                        </li>
+                        <li>
+                            <i class="fa fa-dashboard"></i>  <a href="{{ path('admin_default_index') }}">لوحة التحكم</a>
+                        </li>
+
+                    </ol>
+                </div>
+            </div>
+            <!-- /.row -->
+
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>قائمة بالمستخدمين الحاليين ضمن الموقع</h2>
+                    <div class="table-responsive" style="direction: rtl;">
+                        <table id="myTable" class="table table-bordered table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th onclick="sortTable(0)">اسم المستخدم</th>
+                                <th onclick="sortTable(1)">البريد الإلكتروني</th>
+                                <th>العمليات</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                {% for user in users %}
+                                    <tr class="">
+                                        <td> {{ user.username }} </td>
+                                        <td> {{ user.email }} </td>
+                                        <td>
+                                            {% if is_granted('ROLE_SUPER_ADMIN') and user.id != app.user.id %}
+                                                <a href="{{ path('admin_user_update',{'id':user.id}) }}"><button class="btn btn-danger"> ترقية إلى محرر </button> </a>
+                                                <a href="{{ path('admin_user_delete',{'id':user.id}) }}"><button class="btn btn-danger"> تدمير البيانات </button> </a>
+                                            {% else %}
+                                                <div class="alert alert-warning">لا يمكنك التعديل هنا</div>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+
+            <button style="margin: 0 auto;" class="ajaxy btn btn-info">المزيد من المستخدمين؟</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        td a{
+            display: inline!important;
+            margin-top: 5px;
+        }
+        td a:hover{
+            color:white;
+            text-decoration: none;
+        }
+        th:hover{
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function sortTable(n) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("myTable");
+            switching = true;
+            dir = "asc";
+            while (switching) {
+                switching = false;
+                rows = table.getElementsByTagName("TR");
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    if (dir === "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir === "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount ++;
+                } else {
+                    if (switchcount === 0 && dir === "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+
+
+        $(document).on('click', 'button.ajaxy', function(){
+            that = $(this);
+            $.ajax({
+                url:'{{ (path('admin_users_more',{'num':(users|length) + 10})) }}',
+                type: "POST",
+                dataType: "json",
+                data: {},
+                async: true,
+                success: function (data)
+                {
+                    data = $.parseJSON(data.data);
+                    for (var i ={{ users|length }};i < data.length; i++) {
+                        var line = "<tr><td>" + data[i]["username"] + "</td>";
+                        line += "<td>" + data[i]["email"] + "</td>";
+                        line += "<td>" +
+                            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                                "<a href='/admin/user/update/"  + data[i]["id"] + " '><button class='btn btn-danger'> ترقية إلى محرر </button> </a><a href='/admin/user/delete/"  + data[i]["id"] + " '><button class='btn btn-danger'> تدمير البيانات </button> </a>" +
+                            {% else %}
+                                "<div class=\"alert alert-warning\">لا يمكنك التعديل هنا</div>" +
+                            {% endif %}
+                            "</td></tr>";
+
+                            jQuery("#tbody").append(line);
+                    }
+                }
+            });
+            return false;
+
+        });
+
+    </script>
+{% endblock %}

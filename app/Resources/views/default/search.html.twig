@@ -1,0 +1,250 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+
+    <div class="container form">
+        <div class="row">
+            <h3> إعدادات البحث المتقدمة: </h3>
+        </div>
+        <div class="row">
+            <form action="{{ path('searcher') }}" method="get">
+                <div class="row">
+                    <div class="col-sm-10">
+                        <input type="text" placeholder="ابحث عن ما يدور في ذهنك!!" name="query">
+                    </div>
+                    <div class="col-sm-2">
+                        <input class="btn btn-info text-center" type="submit" value="بحث">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <h4 class="col-sm-12 wrapper">
+                        <!---->البحث عن الخبر حسب:&nbsp;
+                        <input id="type" type="radio" name="srs" value="type"><label for="type"> النوع </label>&nbsp;
+                        <input id="tag" type="radio" name="srs" value="tag"><label for="tag"> الوسم </label>&nbsp;
+                        <input id="title" type="radio" name="srs" value="title"><label for="title"> العنوان </label>&nbsp;
+                    </h4>
+                </div>
+
+
+
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2>لقد قمت بالبحث عن: {{ data }}</h2>
+                <hr>
+            </div>
+            <div class="panel-body">
+
+                <div class="col-sm-12 politics_main_1">
+
+                    <div class="row">
+
+                        {% for post in news %}
+
+                            <div class="col-sm-4">
+                                <div class="politics_3">
+                                    <a href="{{ path('post',{'id':post.id}) }}">
+                                        <h4>{{ post.title }}</h4>
+                                        {% if post.mainImage != "" %}
+                                            <img src="{{ asset('uploads/') }}{{ post.mainImage }}" width="100%" height="300px">
+                                        {% else %}
+                                            <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                        {% endif %}
+                                    </a>
+                                </div>
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        h4{
+            text-align: center!important;
+            font-size: 16px!important;
+        }
+        .politics_3{
+            margin-bottom: 10px!important;
+        }
+
+        .form{
+            margin-top: 50px;
+            margin-bottom: 30px;
+            padding: 30px;
+            background-color: rgba(50,50,50,0.1);
+            box-shadow: 5px 5px #C9C9C9;
+        }
+
+
+
+        .wrapper{
+            display: inline;
+            margin: auto 7px;
+        }
+
+        /* Basic styles */
+        .wrapper input[type="checkbox"], .wrapper input[type='radio']{
+            position: absolute;
+            opacity: 0;
+            z-index: -1;
+        }
+        .wrapper label {
+            position: relative;
+            display: inline-block;
+            padding: 0 0 0 2em;
+            height: 1.5em;
+            line-height: 1.5;
+            cursor: pointer;
+        }
+        .wrapper label::before,
+        .wrapper label::after {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+            width: 1.5em;
+            height: 1.5em;
+        }
+        .wrapper label::before {
+            content: " ";
+            border: 2px solid #bdc3c7;
+            border-radius: 20%;
+        }
+        [type="radio"]{
+            display: none;
+        }
+        /* Checkbox */
+        .wrapper input[type="radio"] + label::after {
+            content: "\2714";
+            color: #2c3e50;
+            line-height: 1.5;
+            text-align: center;
+        }
+        /* :checked */
+        .wrapper input[type="radio"]:checked + label::before,
+        input[type="radio"]:checked + label::before {
+            background: #fff;
+            border-color: #fff;
+        }
+        .wrapper input[type="radio"] + label::after{
+            -webkit-transform: scale(0);
+            -ms-transform: scale(0);
+            -o-transform: scale(0);
+            transform: scale(0);
+        }
+        .wrapper input[type="radio"]:checked + label::after{
+            -webkit-transform: scale(1);
+            -ms-transform: scale(1);
+            -o-transform: scale(1);
+            transform: scale(1);
+        }
+        /* Checkbox */
+        .wrapper input[type="checkbox"] + label::after {
+            content: "\2714";
+            color: #2c3e50;
+            line-height: 1.5;
+            text-align: center;
+        }
+        /* :checked */
+        .wrapper input[type="checkbox"]:checked + label::before,
+        input[type="checkbox"]:checked + label::before {
+            background: #fff;
+            border-color: #fff;
+        }
+        .wrapper input[type="checkbox"] + label::after{
+            -webkit-transform: scale(0);
+            -ms-transform: scale(0);
+            -o-transform: scale(0);
+            transform: scale(0);
+        }
+        .wrapper input[type="checkbox"]:checked + label::after{
+            -webkit-transform: scale(1);
+            -ms-transform: scale(1);
+            -o-transform: scale(1);
+            transform: scale(1);
+        }
+        /* Transition */
+        .wrapper label::before,
+        .wrapper label::after {
+            -webkit-transition: .25s all ease;
+            -o-transition: .25s all ease;
+            transition: .25s all ease;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="datetime"],
+        input[type="email"],
+        input[type="number"],
+        input[type="search"],
+        input[type="time"],
+        input[type="url"],
+        textarea,
+        select
+        {
+            -webkit-transition: all 0.30s ease-in-out;
+            -moz-transition: all 0.30s ease-in-out;
+            -ms-transition: all 0.30s ease-in-out;
+            -o-transition: all 0.30s ease-in-out;
+            outline: none;
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            width: 100%;
+            background: #fff;
+            margin-bottom: 4%;
+            border: 1px solid #ccc;
+            padding: 3%;
+            color: #555;
+            font: 95% Arial, Helvetica, sans-serif;
+        }
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        input[type="datetime"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        input[type="search"]:focus,
+        input[type="time"]:focus,
+        input[type="url"]:focus,
+        textarea:focus,
+        select:focus
+        {
+            box-shadow: 0 0 5px #333;
+            padding: 3%;
+            border: 1px solid #333;
+        }
+
+        input[type="submit"],
+        input[type="button"]{
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 3%;
+            border-top-style: none;
+            border-right-style: none;
+            border-left-style: none;
+            color: #fff;
+            height: 35px!important;
+            text-align: center!important;
+        }
+        input[type=text]{
+            height: 35px!important;
+        }
+    </style>
+{% endblock %}

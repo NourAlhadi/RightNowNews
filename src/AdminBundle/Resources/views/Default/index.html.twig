@@ -61,7 +61,7 @@ active
                             </div>
                         </div>
                     </div>
-                    <a href="#">
+                    <a href="{{ path('admin_tags') }}">
                         <div class="panel-footer">
                             <span class="pull-left">مزيد من التفاصيل</span>
                             <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -83,7 +83,7 @@ active
                             </div>
                         </div>
                     </div>
-                    <a href="#">
+                    <a href="{{ path('admin_users') }}">
                         <div class="panel-footer">
                             <span class="pull-left">مزيد من التفاصيل</span>
                             <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -107,7 +107,7 @@ active
                                 </div>
                             </div>
                         </div>
-                        <a href="#">
+                        <a href="{{ path('admin_admins') }}">
                             <div class="panel-footer">
                                 <span class="pull-left">مزيد من التفاصيل</span>
                                 <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
@@ -121,6 +121,33 @@ active
         <!-- /.row -->
 
 
+        <div class="row">
+            <div class="col-lg-3 col-md-6"></div>
+            <div class="col-lg-6 col-md-6">
+                <div class="panel panel-blue panel-brown">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-envelope fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">{{ msg }}</div>
+                                <div>رسائل الموقع</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#">
+                        <div class="panel-footer">
+                            <span class="pull-left">مزيد من التفاصيل</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6"></div>
+        </div>
+
 
     </div>
     <!-- /.container-fluid -->
@@ -129,3 +156,19 @@ active
 <!-- /#page-wrapper -->
 {% endblock %}
 
+{% block stylesheets %}
+    <style>
+        .panel-brown{
+            background-color: sandybrown!important;
+        }
+        .panel-brown a{
+            color:sandybrown!important;
+        }
+        .panel-brown a:hover{
+            color:saddlebrown!important;
+        }
+        .panel-brown .panel-heading{
+            color:white!important;
+        }
+    </style>
+{% endblock %}

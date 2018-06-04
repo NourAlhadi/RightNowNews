@@ -34,8 +34,11 @@
                             <div class="story_image">
                                 <div>
                                     <a href="{{ path('post',{'id':hot_news[val].id}) }}" >
-                                        <!--img src="{{ hot_news[val].mainImage }}" width="100%"-->
-                                        <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                        {% if hot_news[val].mainImage != "" %}
+                                            <img src="{{ asset('uploads/') }}{{ hot_news[val].mainImage }}" width="100%">
+                                        {% else %}
+                                            <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                        {% endif %}
                                     </a>
                                 </div>
                                 <div class="story_heading">
@@ -78,8 +81,11 @@
                                 <div class="col-sm-12 buzz_main">
                                     <div class="col-sm-5 buzz_inner">
                                         <div class="buzz_2">
-                                            <!--img src="{{ post.mainImage }}" width="100%"-->
-                                            <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                            {% if post.mainImage != "" %}
+                                                <img src="{{ asset('uploads/') }}{{ post.mainImage }}" width="100%">
+                                            {% else %}
+                                                <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                            {% endif %}
                                         </div>
                                     </div>
                                     <div class="col-sm-7 buzz_inner_1">
@@ -98,9 +104,11 @@
                                 <div class="stories_1 feature_1">
                                     <h5>أهم الأحداث السياسية</h5>
                                     <a href="{{ path('post',{'id':post.id}) }}">
-                                        <!--img src="{{ post.mainImage }}" width="100%"-->
-                                        <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
-                                    </a>
+                                        {% if post.mainImage != "" %}
+                                            <img src="{{ asset('uploads/') }}{{ post.mainImage }}" width="100%">
+                                        {% else %}
+                                            <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                        {% endif %}</a>
                                     <div class="buzz_1">
                                         <a href="{{ path('post',{'id':post.id}) }}">
                                             {{ post.title }}
@@ -161,8 +169,11 @@
                                         {% set count = count +1 %}
                                         {% if count == 1 %}
                                             <a href="{{ path('post',{'id':post.id}) }}">
-                                                <!--img src="{{ post.mainImage }}" width="100%"-->
-                                                <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                                {% if post.mainImage != "" %}
+                                                    <img src="{{ asset('uploads/') }}{{ post.mainImage }}" width="100%">
+                                                {% else %}
+                                                    <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                                {% endif %}
                                             </a>
                                             <ul>
                                                 <li class="border_bottom_1">
@@ -208,8 +219,11 @@
                                         {% set count = count +1 %}
                                         {% if count == 1 %}
                                             <a href="{{ path('post',{'id':post.id}) }}">
-                                                <!--img src="{{ post.mainImage }}" width="100%"-->
-                                                <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                                {% if post.mainImage != "" %}
+                                                    <img src="{{ asset('uploads/') }}{{ post.mainImage }}" width="100%">
+                                                {% else %}
+                                                    <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                                {% endif %}
                                             </a>
                                             <ul>
                                                 <li class="border_bottom_1">

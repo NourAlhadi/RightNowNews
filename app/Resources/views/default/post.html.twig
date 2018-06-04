@@ -35,7 +35,7 @@
                 {% if post.mainImage is null or post.mainImage == '' %}
                     <img class="img-responsive" src="http://placehold.it/900x300" alt="">
                 {% else %}
-                    <img class="img-responsive" src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" alt="">
+                    <img class="img-responsive" src="{{ asset('uploads/') }}{{ post.mainImage }}" alt="">
                 {% endif %}
                 <hr>
 
@@ -131,7 +131,7 @@
                                     <li class="alert alert-info"> هذا الخبر غير مربوط بأي وسم!! </li>
                                 {% else %}
                                     {% for tag in post.tag %}
-                                        <li><a href="#"> {{ tag.name }} </a></li>
+                                        <li><a href="{{ path('news_tag',{'id':tag.id}) }}"> {{ tag.name }} </a></li>
                                     {% endfor %}
                                 {% endif %}
                             </ul>

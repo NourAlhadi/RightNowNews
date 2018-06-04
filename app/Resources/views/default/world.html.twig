@@ -51,7 +51,11 @@
                             {% for post in news if idx < 10 %}
                                 {% if idx == 0 %}
                                     <div class="item active">
-                                        <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                        {% if post.mainImage != "" %}
+                                            <img src="{{ asset('uploads/') }}{{ post.mainImage }}" width="100%">
+                                        {% else %}
+                                            <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                        {% endif %}
                                         <div class="carousel-caption">
                                             <a href="{{ path('post',{'id':post.id}) }}" >
                                                 <h1 class="carousel-caption-header">{{ post.title }}</h1>
@@ -61,7 +65,11 @@
                                     </div>
                                 {% else %}
                                     <div class="item">
-                                        <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                        {% if post.mainImage != "" %}
+                                            <img src="{{ asset('uploads/') }}{{ post.mainImage }}" width="100%">
+                                        {% else %}
+                                            <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                        {% endif %}
                                         <div class="carousel-caption">
                                             <a href="{{ path('post',{'id':post.id}) }}" >
                                                 <h1 class="carousel-caption-header">{{ post.title }}</h1>
@@ -116,8 +124,11 @@
                                 {% for post in economy if idx < 10 %}
                                 {% if idx == 0 %}
                                 <a href="{{ path('post',{'id':post.id}) }}">
-                                    <!--img src="{{ post.mainImage }}" width="100%"-->
-                                    <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                    {% if post.mainImage != "" %}
+                                        <img src="{{ asset('uploads/') }}{{ post.mainImage }}" width="100%">
+                                    {% else %}
+                                        <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                    {% endif %}
                                     <h2>{{ post.title }}</h2>
                                 </a>
 
@@ -150,8 +161,11 @@
                                 {% for post in politics if idx < 10 %}
                                 {% if idx == 0 %}
                                 <a href="{{ path('post',{'id':post.id}) }}">
-                                    <!--img src="{{ post.mainImage }}" width="100%"-->
-                                    <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                    {% if post.mainImage != "" %}
+                                        <img src="{{ asset('uploads/') }}{{ post.mainImage }}" width="100%">
+                                    {% else %}
+                                        <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                    {% endif %}
                                     <h2>{{ post.title }}</h2>
                                 </a>
 
@@ -193,8 +207,11 @@
                                 {% for post in misc if idx < 10 %}
                                 {% if idx == 0 %}
                                 <a href="{{ path('post',{'id':post.id}) }}">
-                                    <!--img src="{{ post.mainImage }}" width="100%"-->
-                                    <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                    {% if post.mainImage != "" %}
+                                        <img src="{{ asset('uploads/') }}{{ post.mainImage }}" width="100%">
+                                    {% else %}
+                                        <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                    {% endif %}
                                     <h2>{{ post.title }}</h2>
                                 </a>
 
@@ -228,8 +245,11 @@
                                 {% for post in sport if idx < 10 %}
                                 {% if idx == 0 %}
                                 <a href="{{ path('post',{'id':post.id}) }}">
-                                    <!--img src="{{ post.mainImage }}" width="100%"-->
-                                    <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                    {% if post.mainImage != "" %}
+                                        <img src="{{ asset('uploads/') }}{{ post.mainImage }}" width="100%">
+                                    {% else %}
+                                        <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                    {% endif %}
                                     <h2>{{ post.title }}</h2>
                                 </a>
 

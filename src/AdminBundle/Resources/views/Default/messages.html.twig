@@ -1,0 +1,150 @@
+{% extends '@Admin/base.html.twig' %}
+
+{% block mActive %} active {% endblock %}
+{% block body %}
+    <div id="page-wrapper">
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">رسائل الصفحة</h1>
+                    <ol class="breadcrumb">
+                        <li class="active">
+                            <i class="fa fa-envelope"></i>رسائل الصفحة
+                        </li>
+                        <li>
+                            <i class="fa fa-dashboard"></i>  <a href="{{ path('admin_default_index') }}">لوحة التحكم</a>
+                        </li>
+
+                    </ol>
+                </div>
+            </div>
+            <!-- /.row -->
+
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>مجموعة الرسائل الحالية ضمن الموقع</h2>
+                    <div class="table-responsive" style="direction: rtl;">
+                        <table id="myTable" class="table table-bordered table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th onclick="sortTable(0)">اسم المرسل</th>
+                                <th onclick="sortTable(1)">البريد الإلكتروني</th>
+                                <th onclick="sortTable(2)">رقم الهاتف</th>
+                                <th onclick="sortTable(3)">العنوان</th>
+                                <th onclick="sortTable(5)">نص الرسالة</th>
+                                <th>العمليات</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                {% for msg in messages %}
+                                    <tr class="">
+                                        <td> {{ msg.sender }} </td>
+                                        <td> {{ msg.email }} </td>
+                                        <td> {{ msg.phone }} </td>
+                                        <td> {{ msg.address }} </td>
+                                        <td> {{ msg.message }} </td>
+                                        <td>
+                                            <a href="{{ path('admin_messages_delete',{'id':msg.id}) }}"><button class="btn btn-danger"> حذف </button> </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+
+            <button style="margin: 0 auto;" class="ajaxy btn btn-info">المزيد من الرسائل؟</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        td a{
+            display: inline!important;
+            margin-top: 5px;
+        }
+        td a:hover{
+            color:white;
+            text-decoration: none;
+        }
+        th:hover{
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function sortTable(n) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("myTable");
+            switching = true;
+            dir = "asc";
+            while (switching) {
+                switching = false;
+                rows = table.getElementsByTagName("TR");
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    if (dir === "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir === "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount ++;
+                } else {
+                    if (switchcount === 0 && dir === "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+
+
+        $(document).on('click', 'button.ajaxy', function(){
+            that = $(this);
+            $.ajax({
+                url:'{{ (path('admin_messages_more',{'num':(messages|length) + 10})) }}',
+                type: "POST",
+                dataType: "json",
+                data: {},
+                async: true,
+                success: function (data)
+                {
+                    data = $.parseJSON(data.data);
+                    for (var i ={{ messages|length }};i < data.length; i++) {
+                        var line = "<tr><td>" + data[i]["sender"] + "</td>";
+                        line += "<td>" + data[i]["email"] + "</td>";
+                        line += "<td>" + data[i]["phone"] + "</td>";
+                        line += "<td>" + data[i]["address"] + "</td>";
+                        line += "<td>" + data[i]["message"] + "</td>";
+                        line += "<td><a href='/admin/messages/delete/"  + data[i]["id"] + " '><button class='btn btn-danger'> حذف </button> </a></td></tr>";
+
+                            jQuery("#tbody").append(line);
+                    }
+                }
+            });
+            return false;
+
+        });
+
+    </script>
+{% endblock %}

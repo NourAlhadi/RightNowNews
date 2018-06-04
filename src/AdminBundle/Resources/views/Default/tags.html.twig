@@ -1,0 +1,148 @@
+{% extends '@Admin/base.html.twig' %}
+
+{% block tActive %} active {% endblock %}
+{% block body %}
+    <div id="page-wrapper">
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">الوسوم</h1>
+                    <ol class="breadcrumb">
+                        <li class="active">
+                            <i class="fa fa-tag"></i> الوسوم
+                        </li>
+                        <li>
+                            <i class="fa fa-dashboard"></i>  <a href="{{ path('admin_default_index') }}">لوحة التحكم</a>
+                        </li>
+
+                    </ol>
+                </div>
+            </div>
+            <!-- /.row -->
+
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <h2>قائمة بالوسوم الحالية ضمن الموقع</h2>
+                    <div class="table-responsive" style="direction: rtl;">
+                        <table id="myTable" class="table table-bordered table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th onclick="sortTable(0)">الرقم المميز</th>
+                                <th onclick="sortTable(1)">الاسم</th>
+                                <th>العمليات</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                {% for tag in tags %}
+                                    <tr class="">
+                                        <td> {{ tag.id }} </td>
+                                        <td> {{ tag.name }} </td>
+                                        <td>
+                                            <a href="{{ path('admin_tags_update',{'id':tag.id}) }}"><button class="btn btn-danger"> تعديل </button> </a>
+                                            <a href="{{ path('admin_tags_delete',{'id':tag.id}) }}"><button class="btn btn-danger"> حذف </button> </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+
+            <button style="margin: 0 auto;" class="ajaxy btn btn-info">المزيد من الوسوم؟</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        td a{
+            display: inline!important;
+            margin-top: 5px;
+        }
+        td a:hover{
+            color:white;
+            text-decoration: none;
+        }
+        th:hover{
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        function sortTable(n) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("myTable");
+            switching = true;
+            dir = "asc";
+            while (switching) {
+                switching = false;
+                rows = table.getElementsByTagName("TR");
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    if (dir === "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir === "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount ++;
+                } else {
+                    if (switchcount === 0 && dir === "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+
+
+        $(document).on('click', 'button.ajaxy', function(){
+            that = $(this);
+            $.ajax({
+                url:'{{ (path('admin_tags_more',{'num':(tags|length) + 10})) }}',
+                type: "POST",
+                dataType: "json",
+                data: {},
+                async: true,
+                success: function (data)
+                {
+                    data = $.parseJSON(data.data);
+                    for (var i ={{ tags|length }};i < data.length; i++) {
+                        var tp = "لا نوع محدد";
+                        if (data[i]["type"][0] !== undefined){
+                            tp = data[i]["type"][0]["name"];
+                        }
+                        var dt = data[i]["date"];
+                        dt = timeConverter(dt["timestamp"]);
+                        var line = "<tr><td>" + data[i]["id"] + "</td>";
+                        line += "<td>" + data[i]["name"].length + "</td>";
+                        line += "<td><a href='/admin/tags/update/"  + data[i]["id"] + " '><button class='btn btn-danger'> تعديل </button> </a><a href='/admin/news/delete/"  + data[i]["id"] + " '><button class='btn btn-danger'> حذف </button> </a></td></tr>";
+
+                            jQuery("#tbody").append(line);
+                    }
+                }
+            });
+            return false;
+
+        });
+
+    </script>
+{% endblock %}

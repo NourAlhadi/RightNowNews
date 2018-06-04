@@ -152,12 +152,15 @@
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search">
-                                <span class="input-group-btn">
-                                <button class="btn btn-primary" type="button">Go!</button>
-                                </span>
-                            </div>
+                            <form action="{{ path('searcher') }}" method="get">
+                                <div class="input-group">
+                                    <input name="query" type="text" class="form-control" placeholder="ابحث عن خبر أو وسم أو مكان">
+                                    <span class="input-group-btn">
+                                    <input class="btn btn-primary" type="submit" value="هيا بنا!!">
+                                    <input type="hidden" name="srs" value="title">
+                                    </span>
+                                </div>
+                            </form>
                         </div>
                     </div>
 

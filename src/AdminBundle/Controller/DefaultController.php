@@ -8,6 +8,7 @@ use AppBundle\Entity\tag;
 use AppBundle\Form\newsType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -37,11 +38,15 @@ class DefaultController extends Controller
             else $userC++;
         }
 
+        $msg = $em->getRepository('AppBundle:Message')->findAll();
+        $msgC = sizeof($msg);
+
         return $this->render('AdminBundle:Default:index.html.twig',[
             "news" =>$newsC,
             "tags" =>$tagsC,
             "user" =>$userC,
             "admin"=>$adminC,
+            "msg"=>$msgC,
         ]);
     }
 
@@ -280,5 +285,340 @@ class DefaultController extends Controller
 
 
         return $this->redirectToRoute("admin_news");
+    }
+
+
+
+    /**
+     * @Route("/admin/tags/",name="admin_tags")
+     */
+    public function tagsAction(){
+        $em = $this->getDoctrine()->getManager();
+        $tags = $em->getRepository('AppBundle:tag')->findBy([],['name'=>'ASC']);
+        $tags = array_slice($tags,0, 25);
+
+        return $this->render('@Admin/Default/tags.html.twig',[
+            "tags"=>$tags,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/tags/more/{num}",name="admin_tags_more")
+     */
+    public function tagsMoreAction($num){
+        $em = $this->getDoctrine()->getManager();
+
+        $tags = $em->getRepository('AppBundle:tag')->findBy([],['name'=>'ASC']);
+        $tags = array_slice($tags,0,$num);
+
+        $encoder = new JsonEncoder();
+        $normalizer = new ObjectNormalizer();
+
+        $normalizer->setCircularReferenceHandler(function ($object) {
+            return $object->getName();
+        });
+
+        $serializer = new Serializer(array($normalizer), array($encoder));
+
+        $data = $serializer->serialize($tags, 'json');
+
+        $response = new Response();
+        $response->setContent(json_encode(array(
+            'data' => $data,
+        )));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
+
+    /**
+     * @Route("/admin/tags/delete/{id}", name="admin_tags_delete")
+     */
+    public function deleteTagsAction($id){
+        $em = $this->getDoctrine()->getManager();
+        $news = $em->getRepository('AppBundle:tag')->findOneBy(['id'=>$id]);
+        if ($news == null) return $this->redirectToRoute("admin_tags");
+
+        $connection = $this->getDoctrine()->getConnection();
+        $sql = $connection->prepare("delete from tag where id = :id;");
+        $sql->bindValue("id",$id);
+        $sql->execute();
+
+
+        $connection = $this->getDoctrine()->getConnection();
+        $sql = $connection->prepare("delete from news_tag where tag_id = :id;");
+        $sql->bindValue("id",$id);
+        $sql->execute();
+
+
+        return $this->redirectToRoute("admin_tags");
+    }
+
+
+    /**
+     * @Route("/admin/tags/update/{id}", name="admin_tags_update")
+     */
+    public function updateTagsAction(Request $request,$id){
+
+        $em = $this->getDoctrine()->getManager();
+
+        $tag = $em->getRepository('AppBundle:tag')->findOneBy(['id'=>$id]);
+        if ($tag == null) return $this->redirectToRoute('admin_news');
+
+        $last = $tag;
+
+        $form = $this->createFormBuilder($tag)
+            ->add('name', TextType::class,[
+                'label' => 'اسم الوسم: '
+            ])
+            ->getForm();
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $tag = $form->getData();
+
+            $em->persist($tag);
+            $em->flush();
+            return $this->redirectToRoute('admin_tags');
+        }
+
+
+        return $this->render('@Admin/Default/tags_form_update.html.twig',[
+            "form"=>$form->createView(),
+            "last"=>$last,
+        ]);
+    }
+
+
+    /**
+     * @Route("/admin/users/",name="admin_users")
+     */
+    public function usersAction(){
+        $em = $this->getDoctrine()->getManager();
+        $users = $em->getRepository('AppBundle:User')->findBy([],['username'=>'ASC']);
+        $vUsers = [];
+        for ($i = 0; $i < sizeof($users); $i++){
+            if (!$users[$i]->hasRole('ROLE_SUPER_ADMIN') && !$users[$i]->hasRole('ROLE_ADMIN')){
+                array_push($vUsers,$users[$i]);
+            }
+        }
+        $users = $vUsers;
+        $users = array_slice($users,0, 25);
+
+        return $this->render('@Admin/Default/users.html.twig',[
+            "users"=>$users,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/users/more/{num}",name="admin_users_more")
+     */
+    public function usersMoreAction($num){
+        $em = $this->getDoctrine()->getManager();
+
+        $users = $em->getRepository('AppBundle:User')->findBy([],['username'=>'ASC']);
+        $vUsers = [];
+        for ($i = 0; $i < sizeof($users); $i++){
+            if (!$users[$i]->hasRole('ROLE_SUPER_ADMIN') && !$users[$i]->hasRole('ROLE_ADMIN')){
+                array_push($vUsers,$users[$i]);
+            }
+        }
+        $users = $vUsers;
+        $users = array_slice($users,0,$num);
+
+        $encoder = new JsonEncoder();
+        $normalizer = new ObjectNormalizer();
+
+        $normalizer->setCircularReferenceHandler(function ($object) {
+            return $object->getName();
+        });
+
+        $serializer = new Serializer(array($normalizer), array($encoder));
+
+        $data = $serializer->serialize($users, 'json');
+
+        $response = new Response();
+        $response->setContent(json_encode(array(
+            'data' => $data,
+        )));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
+    /**
+     * @Route("/admin/user/update/{id}", name="admin_user_update")
+     */
+    public function updateUserAction($id){
+
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository('AppBundle:User')->findOneBy(['id'=>$id]);
+        if ($user != null){
+            $user->addRole('ROLE_ADMIN');
+            $userManager = $this->get('fos_user.user_manager');
+            $userManager->updateUser($user);
+        }
+        return $this->redirectToRoute("admin_users");
+    }
+
+    /**
+     * @Route("/admin/user/delete/{id}", name="admin_user_delete")
+     */
+    public function deleteUserAction($id){
+
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository('AppBundle:User')->findOneBy(['id'=>$id]);
+        if ($user != null){
+            $userManager = $this->get('fos_user.user_manager');
+            $userManager->deleteUser($user);
+        }
+        return $this->redirectToRoute("admin_users");
+    }
+
+
+
+
+    /**
+     * @Route("/admin/admins/",name="admin_admins")
+     */
+    public function adminsAction(){
+        $em = $this->getDoctrine()->getManager();
+        $users = $em->getRepository('AppBundle:User')->findBy([],['username'=>'ASC']);
+        $vUsers = [];
+        for ($i = 0; $i < sizeof($users); $i++){
+            if ($users[$i]->hasRole('ROLE_SUPER_ADMIN') || $users[$i]->hasRole('ROLE_ADMIN')){
+                array_push($vUsers,$users[$i]);
+            }
+        }
+        $users = $vUsers;
+        $users = array_slice($users,0, 25);
+
+        return $this->render('@Admin/Default/admins.html.twig',[
+            "users"=>$users,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/admins/more/{num}",name="admin_admins_more")
+     */
+    public function adminsMoreAction($num){
+        $em = $this->getDoctrine()->getManager();
+
+        $users = $em->getRepository('AppBundle:User')->findBy([],['username'=>'ASC']);
+        $vUsers = [];
+        for ($i = 0; $i < sizeof($users); $i++){
+            if ($users[$i]->hasRole('ROLE_SUPER_ADMIN') || $users[$i]->hasRole('ROLE_ADMIN')){
+                array_push($vUsers,$users[$i]);
+            }
+        }
+        $users = $vUsers;
+        $users = array_slice($users,0,$num);
+
+        $encoder = new JsonEncoder();
+        $normalizer = new ObjectNormalizer();
+
+        $normalizer->setCircularReferenceHandler(function ($object) {
+            return $object->getName();
+        });
+
+        $serializer = new Serializer(array($normalizer), array($encoder));
+
+        $data = $serializer->serialize($users, 'json');
+
+        $response = new Response();
+        $response->setContent(json_encode(array(
+            'data' => $data,
+        )));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
+    /**
+     * @Route("/admin/admins/update/{id}", name="admin_admins_update")
+     */
+    public function updateAdminAction($id){
+
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository('AppBundle:User')->findOneBy(['id'=>$id]);
+        if ($user != null){
+            $user->addRole('ROLE_SUPER_ADMIN');
+            $userManager = $this->get('fos_user.user_manager');
+            $userManager->updateUser($user);
+        }
+        return $this->redirectToRoute("admin_admins");
+    }
+
+    /**
+     * @Route("/admin/admins/delete/{id}", name="admin_admins_delete")
+     */
+    public function deleteAdminAction($id){
+
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository('AppBundle:User')->findOneBy(['id'=>$id]);
+        if ($user != null){
+            $userManager = $this->get('fos_user.user_manager');
+            $userManager->deleteUser($user);
+        }
+        return $this->redirectToRoute("admin_admins");
+    }
+
+
+
+
+
+    /**
+     * @Route("/admin/messages/",name="admin_messages")
+     */
+    public function messagesAction(){
+        $em = $this->getDoctrine()->getManager();
+        $msg = $em->getRepository('AppBundle:Message')->findBy([],['id'=>'DESC']);
+        $msg = array_slice($msg,0, 25);
+
+        return $this->render('@Admin/Default/messages.html.twig',[
+            "messages"=>$msg,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/messages/more/{num}",name="admin_messages_more")
+     */
+    public function messagesMoreAction($num){
+        $em = $this->getDoctrine()->getManager();
+
+        $msg = $em->getRepository('AppBundle:Message')->findBy([],['id'=>'DESC']);
+        $msg = array_slice($msg,0,$num);
+
+        $encoder = new JsonEncoder();
+        $normalizer = new ObjectNormalizer();
+
+        $normalizer->setCircularReferenceHandler(function ($object) {
+            return $object->getName();
+        });
+
+        $serializer = new Serializer(array($normalizer), array($encoder));
+
+        $data = $serializer->serialize($msg, 'json');
+
+        $response = new Response();
+        $response->setContent(json_encode(array(
+            'data' => $data,
+        )));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
+
+
+
+    /**
+     * @Route("/admin/messages/delete/{id}", name="admin_messages_delete")
+     */
+    public function deleteMessageAction($id){
+
+        $em = $this->getDoctrine()->getManager();
+        $msg = $em->getRepository('AppBundle:Message')->findOneBy(['id'=>$id]);
+        if ($msg != null){
+            $em->remove($msg);
+            $em->flush();
+        }
+        return $this->redirectToRoute("admin_messages");
     }
 }
