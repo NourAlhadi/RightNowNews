@@ -91,7 +91,7 @@
                             <ul class="nav navbar-nav navbar-right">
                                 <li>
                                     {% if is_granted('ROLE_USER') %}
-                                        <a style="display: inline;" href="{{ path('fos_user_profile_show') }}"><button class="btn btn-default btn-sm" type="submit">
+                                        <a style="display: inline;" href="{{ path('user_news') }}"><button class="btn btn-default btn-sm" type="submit">
                                                 <i class="glyphicon glyphicon-dashboard"></i>حسابي
                                             </button></a>
                                         <a style="display: inline;"  href="{{ path('fos_user_security_logout') }}"><button class="btn btn-default btn-sm" type="submit">
@@ -156,8 +156,8 @@
                                 <div class="input-group">
                                     <input name="query" type="text" class="form-control" placeholder="ابحث عن خبر أو وسم أو مكان">
                                     <span class="input-group-btn">
-                                    <input class="btn btn-primary" type="submit" value="هيا بنا!!">
-                                    <input type="hidden" name="srs" value="title">
+                                    <input id="srch" class="btn btn-primary" type="submit" value="هيا بنا!!">
+                                    <input id="srs" type="hidden" name="srs" value="tag">
                                     </span>
                                 </div>
                             </form>

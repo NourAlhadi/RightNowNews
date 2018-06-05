@@ -4,6 +4,7 @@ namespace AppBundle\Service;
 
 
 use DateTime;
+use Doctrine\Common\Persistence\ObjectManager;
 
 class FilterNews{
 
@@ -137,8 +138,8 @@ class FilterNews{
         dump($title);
         for ($i = 0;$i < sizeof($this->news_set); $i++){
             $head = $this->news_set[$i]->getTitle();
-            dump($head);
-            dump($this->getDelta($head,$title));
+            //dump($head);
+            //dump($this->getDelta($head,$title));
             if ($this->getDelta($head,$title) <= 2){
                 array_push($ret,$this->news_set[$i]);
             }
@@ -166,6 +167,11 @@ class FilterNews{
         return $ret;
     }
 
+    /**
+     * @param $tag \AppBundle\Entity\tag[]
+     * @param bool $lock
+     * @return \AppBundle\Entity\tag[]
+     */
     public function filter_by_tags($tag, $lock = false){
         $arr = [];
         for ($i = 0; $i < sizeof($tag); $i++){
@@ -209,6 +215,98 @@ class FilterNews{
             $post = $news[$i];
             if ($post->getId() == $id) continue;
             array_push($ret,$post);
+        }
+        return $ret;
+    }
+
+    /**
+     * @param $data string
+     * @param $em ObjectManager
+     * @return \AppBundle\Entity\type
+     */
+    public function getNearestType($data,$em){
+        $ret = null;
+        $all = $em->getRepository('AppBundle:type')->findAll();
+        $res = mb_strlen($data);
+        for ($i = 0; $i < sizeof($all); $i++){
+            $type = $all[$i]->getName();
+            $curr = $this->edit_distance($data,$type);
+            if ($curr < $res){
+                $res = $curr;
+                $ret = $all[$i];
+            }
+        }
+        if ($res > 4) return null;
+        return $ret;
+    }
+
+    /**
+     * @param $data string
+     * @param $em ObjectManager
+     * @return \AppBundle\Entity\tag[]
+     */
+    public function getNearestTags($data,$em){
+        $ret = [];
+        $all = $em->getRepository('AppBundle:tag')->findAll();
+        for ($i = 0; $i < sizeof($all); $i++){
+            $curr = $all[$i]->getName();
+            $curr = $this->mb_str_replace(" "," ",$curr);
+            //dump($curr);
+            //dump($this->edit_distance($curr,$data));
+            if ($this->edit_distance($curr,$data) < 3){
+                array_push($ret,$all[$i]);
+            }
+        }
+        return $ret;
+    }
+
+    public function search_engine($data, $classifier, $em){
+        if ($classifier == "title"){
+            return $this->filter_by_title($data);
+        }else if ($classifier == "type"){
+            $type = $this->getNearestType($data,$em);
+            return $this->filter_by_type($type);
+        }else{
+            $tags = $this->getNearestTags($data,$em);
+            return $this->filter_by_tags($tags,true);
+        }
+    }
+
+
+
+    function mb_str_replace($search, $replace, $subject, &$count = 0) {
+        if (!is_array($subject)) {
+            // Normalize $search and $replace so they are both arrays of the same length
+            $searches = is_array($search) ? array_values($search) : array($search);
+            $replacements = is_array($replace) ? array_values($replace) : array($replace);
+            $replacements = array_pad($replacements, count($searches), '');
+            foreach ($searches as $key => $search) {
+                $parts = mb_split(preg_quote($search), $subject);
+                $count += count($parts) - 1;
+                $subject = implode($replacements[$key], $parts);
+            }
+        } else {
+            // Call mb_str_replace for each subject in array, recursively
+            foreach ($subject as $key => $value) {
+                $subject[$key] = $this->mb_str_replace($search, $replace, $value, $count);
+            }
+        }
+        return $subject;
+    }
+
+    public function rangeDate($st, $en){
+        $ret = [];
+        $st = ($st == null ? null: new DateTime($st));
+        $en = ($en == null ? null: new DateTime($en));
+        for ($i = 0 ; $i < sizeof($this->news_set); $i++){
+            $post = $this->news_set[$i];
+            $dt = $post->getDate();
+            //dump($st);
+            //dump($en);
+            //dump($dt);
+            if ( ($st == null && $dt <= $en) || ($en == null && $dt >= $st) || ($dt >= $st && $dt <= $en) ){
+                array_push($ret,$post);
+            }
         }
         return $ret;
     }

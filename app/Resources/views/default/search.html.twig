@@ -17,17 +17,25 @@
                         <input class="btn btn-info text-center" type="submit" value="بحث">
                     </div>
                 </div>
-
+                <hr>
                 <div class="row">
                     <h4 class="col-sm-12 wrapper">
                         <!---->البحث عن الخبر حسب:&nbsp;
-                        <input id="type" type="radio" name="srs" value="type"><label for="type"> النوع </label>&nbsp;
-                        <input id="tag" type="radio" name="srs" value="tag"><label for="tag"> الوسم </label>&nbsp;
+                        <input id="type" type="radio" name="srs" value="type"><label for="type"> النوع </label>&nbsp;&nbsp;
+                        <input id="tag" type="radio" name="srs" value="tag" checked="checked"><label for="tag"> الوسم </label>&nbsp;&nbsp;
                         <input id="title" type="radio" name="srs" value="title"><label for="title"> العنوان </label>&nbsp;
                     </h4>
                 </div>
-
-
+                <hr>
+                <div class="row">
+                    <h4 class="col-sm-12">
+                        <!---->البحث ضمن نطاق زمني:&nbsp;
+                        <label for="st"> زمن البدء <input id="st" type="date" name="st" value="1980-01-01"></label>&nbsp;&nbsp;
+                        <label for="en"> زمن النهاية <input id="en" type="date" name="en" value="{{ "now"|date("Y-m-d") }}"></label>&nbsp;
+                        <br>
+                        <label class="alert alert-info"> يجب عدم تطابق تاريخ البداية مع النهاية لضمان وجود نتائج!! </label>
+                    </h4>
+                </div>
 
             </form>
         </div>
@@ -37,7 +45,6 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h2>لقد قمت بالبحث عن: {{ data }}</h2>
-                <hr>
             </div>
             <div class="panel-body">
 
@@ -73,8 +80,14 @@
 
 {% endblock %}
 
+{% block javascripts %}
+    <script>
+
+    </script>
+{% endblock %}
 {% block stylesheets %}
     <style>
+
         h4{
             text-align: center!important;
             font-size: 16px!important;
@@ -188,8 +201,6 @@
         }
 
         input[type="text"],
-        input[type="date"],
-        input[type="datetime"],
         input[type="email"],
         input[type="number"],
         input[type="search"],
@@ -245,6 +256,14 @@
         }
         input[type=text]{
             height: 35px!important;
+        }
+        hr {
+            display: block;
+            height: 2px;
+            border: 0;
+            border-top: 1px solid #8f8f8f!important;
+            margin: 1em 0;
+            padding: 0;
         }
     </style>
 {% endblock %}

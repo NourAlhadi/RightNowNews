@@ -48,17 +48,24 @@
                 <!-- Blog Comments -->
 
                 <!-- Comments Form -->
-                <div class="well">
-                    <h4>تفاعل مع الخبر من خلال كتابة تعليق:</h4>
-                    {{ form_start(form) }}
-                            <div class="form-group">
-                                {{ form_widget(form.body,{'attr':{'class':'form-control'} }) }}
-                            </div>
-                            <button type="submit" class="btn btn-primary">إرسال</button>
-                    {{ form_end(form) }}
+                {% if app.user != null %}
+                    <div class="well">
+                        <h4>تفاعل مع الخبر من خلال كتابة تعليق:</h4>
+                        {{ form_start(form) }}
+                                <div class="form-group">
+                                    {{ form_widget(form.body,{'attr':{'class':'form-control'} }) }}
+                                </div>
+                                <button type="submit" class="btn btn-primary">إرسال</button>
+                        {{ form_end(form) }}
 
-                </div>
-
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <!---->قم بتسجيل الدخول حتى تتمكن من كتابة تعليقات على الأخبار
+                        <br><!----> لتسجيل الدخول <a href="{{ path('fos_user_security_login') }}"> اضغط هنا </a>
+                        <br><!----> لتسجيل حساب جديد على الموقع <a href="{{ path('fos_user_registration_register') }}"> اضغط هنا </a>
+                    </div>
+                {% endif %}
                 <hr>
 
                 <!-- Posted Comments -->

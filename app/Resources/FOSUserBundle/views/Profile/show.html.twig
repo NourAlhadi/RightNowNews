@@ -16,7 +16,7 @@
                 {% if user.avatar != "" %}
                     <img class="img-circle" src="{{ asset('uploads/') }}{{ user.avatar }}">
                 {% else %}
-                    <img class="img-circle" src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg">
+                    <img class="img-circle" src="{{ asset('uploads/user') }}">
                 {% endif %}
 
                 <hr>
@@ -53,7 +53,9 @@
 
 
             <div class="col-xs-10 item">
-                <h1> سجل تصفح الأخبار حسب النوع </h1>
+                <h1> نسبة أنواع الأخبار المفضلة
+                <br> اضغط على البيان لتعديل هذه النسب
+                </h1>
 
                 <canvas id="myChart" width="auto" height="auto"></canvas>
 
@@ -64,6 +66,109 @@
 
         </div>
 
+        <div class="modal fade" id="my-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close pull-left" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        <!---->يمكنك اﻵن تخصيص نسبة ظهور الآخبار لديك في أخبارك المفضلة!!
+                    </h4>
+                </div>
+                <form method="post" action="{{ path('user_change_chart') }}">
+                    <div class="modal-body">
+                        <!-->يتم تشكيل نسب ظهور الأخبار المفضلة بالاعتماد على زياراتك للأخبار في الموقع
+                        <br>وهنا نتيح لك إمكانية تعديل عدد الزيارات بالشكل الذي يجعل النسب تناسب احتياجاتك أكثر!!
+
+                        <br><br>
+
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <input name="pol" type="text" id="pol" value="{{ user.log[1] }}">
+                            </div>
+                            <div class="col-sm-2">
+                                <label for="pol">سياسة</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <input name="eco" type="text" id="eco" value="{{ user.log[2] }}">
+                            </div>
+                            <div class="col-sm-2">
+                                <label for="eco">اقتصاد</label>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <input name="sp" type="text" id="sp" value="{{ user.log[3] }}">
+                            </div>
+                            <div class="col-sm-2">
+                                <label for="sp">رياضة</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <input name="tech" type="text" id="tech" value="{{ user.log[4] }}">
+                            </div>
+                            <div class="col-sm-2">
+                                <label for="tech">تكنولوجيا</label>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <input name="art" type="text" id="art" value="{{ user.log[5] }}">
+                            </div>
+                            <div class="col-sm-2">
+                                <label for="art">فنون</label>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <input name="sc" type="text" id="sc" value="{{ user.log[6] }}">
+                            </div>
+                            <div class="col-sm-2">
+                                <label for="sc">علوم</label>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <input name="fas" type="text" id="fas" value="{{ user.log[7] }}">
+                            </div>
+                            <div class="col-sm-2">
+                                <label for="fas">موضة</label>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <input name="misc" type="text" id="misc" value="{{ user.log[8] }}">
+                            </div>
+                            <div class="col-sm-2">
+                                <label for="misc">منوع</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">تثبيت التعديلات</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">إغلاق</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
     </div>
 
@@ -72,6 +177,19 @@
 
 {% block stylesheets %}
     <style>
+        .close{
+            color: white!important;
+        }
+        .modal-content{
+            background-color: #C9C9C9;
+            color: #000;
+            direction: rtl!important;
+        }
+        .modal-header{
+            background-color: #C00;
+            color: #FFF;
+        }
+
         .header1{
             text-align: center;
             color:#333;
@@ -149,8 +267,21 @@
 {% endblock %}
 
 {% block javascripts %}
-
+    <script src="{{ asset('Assets/js/jquery-2.1.1.min.js') }}"></script>
+    <script src="{{ asset('Assets/js/bootstrap.min.js') }}"></script>
     <script>
+
+        $("#myChart").on('click',function(evt) {
+            $('#my-modal').modal('show');
+        });
+
+    {% set sum = 0 %}
+    {% for i in 1..8 %}
+        {% set sum = sum + user.log[i] %}
+    {% endfor %}
+    {% if sum <= 0 %}
+        {% set sum = 1 %}
+    {% endif %}
         var ctx = document.getElementById("myChart");
         var myChart = new Chart(ctx, {
             type: 'bar',
@@ -158,8 +289,11 @@
                 labels: ["سياسة", "اقتصاد", "رياضة", "تكنولوجيا", "فنون", "علوم" , "موضة" , "منوع"],
                 datasets: [{
                     label: 'عدد الأخبار من هذا النوع',
-                    data: [{{ user.log[1] }}, {{ user.log[2] }}, {{ user.log[3] }}, {{ user.log[4] }},
-                        {{ user.log[5] }}, {{ user.log[6] }},{{ user.log[7] }},{{ user.log[8] }}],
+                    data: [{{ (user.log[1] / sum * 100)|round(2) }}, {{ (user.log[2] / sum * 100)|round(2) }},
+                            {{ (user.log[3] / sum * 100)|round(2) }}, {{ (user.log[4] / sum * 100)|round(2) }},
+                            {{ (user.log[5] / sum * 100)|round(2) }}, {{ (user.log[6] / sum * 100)|round(2) }},
+                            {{ (user.log[7] / sum * 100)|round(2) }}, {{ (user.log[8] / sum * 100)|round(2) }}
+                            ],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(54, 162, 235, 0.2)',

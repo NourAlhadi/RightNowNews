@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Comment;
 use AppBundle\Entity\Message;
 use AppBundle\Entity\tag;
+use AppBundle\Entity\User;
 use AppBundle\Form\CommentType;
 use AppBundle\Form\MessageType;
 use AppBundle\Form\UserType;
@@ -16,6 +17,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class DefaultController extends Controller
 {
@@ -342,7 +347,8 @@ class DefaultController extends Controller
     public function searcherAction(Request $request, FilterNews $filter){
         $data = $request->get('query');
         $classifier = $request->get('srs');
-        if ($classifier == null) $classifier = "title";
+        $st = $request->get('st');
+        $en = $request->get('en');
 
         $em = $this->getDoctrine()->getManager();
 
@@ -350,7 +356,11 @@ class DefaultController extends Controller
         $filter->setNewsSet($news);
         $hot = $filter->filter_hot_news();
 
-        $news = $filter->filter_by_title($data);
+        $news = $filter->search_engine($data,$classifier,$em);
+
+        $filter->setNewsSet($news);
+
+        $news = $filter->rangeDate($st,$en);
 
         return $this->render('default/search.html.twig',[
             "news" => $news,
@@ -493,6 +503,86 @@ class DefaultController extends Controller
 
         return $this->render('default/change_password.html.twig',[
             "form" => $form->createView(),
+        ]);
+    }
+
+
+    /**
+     * @Route("/user/change/chart/",name="user_change_chart")
+     */
+    public function userChangeChartAction(Request $request){
+        $pol = $request->get('pol');
+        $eco = $request->get('eco');
+        $sp = $request->get('sp');
+        $tech = $request->get('tech');
+        $art = $request->get('art');
+        $sc = $request->get('sc');
+        $fas = $request->get('fas');
+        $misc = $request->get('misc');
+
+        $user = $this->getUser();
+        $user->setOneLog(1,$pol);
+        $user->setOneLog(2,$eco);
+        $user->setOneLog(3,$sp);
+        $user->setOneLog(4,$tech);
+        $user->setOneLog(5,$art);
+        $user->setOneLog(6,$sc);
+        $user->setOneLog(7,$fas);
+        $user->setOneLog(8,$misc);
+
+        $userManager = $this->get('fos_user.user_manager');
+        $userManager->updateUser($user);
+
+        return $this->redirectToRoute('fos_user_profile_show');
+
+    }
+
+
+    /**
+     * @Route("/profile/news/",name="user_news")
+     */
+    public function userNewsAction(){
+        $user = $this->getUser();
+        $log = $user->getLog();
+        $sum = 0;
+        $delta = [];
+        $used = [];
+        for ($i = 1; $i <= 8; $i++){
+            $log[$i] += 0;
+            $sum += $log[$i];
+            array_push($delta,0);
+            array_push($used,0);
+        }
+
+        $lock = false;
+        if ($sum == 0) {
+            $sum = 1;
+            $lock = true;
+        }
+
+        $target = 20;
+
+
+        for ($i = 1; $i <= 8; $i++){
+            if ($lock) $log[$i] = 1;
+            $delta[$i] = floor( ($log[$i] /  $sum) * $target );
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $all = $em->getRepository('AppBundle:news')->findBy([],['date'=>'DESC']);
+
+        $news = [];
+        for ($i =0 ; $i< sizeof($all); $i++){
+            $post = $all[$i];
+            $tId = $post->getType()[0]->getId();
+            if ($delta[$tId] > 0){
+                $delta[$tId]--;
+                array_push($news,$post);
+            }
+        }
+
+        return $this->render('FOSUserBundle:Profile:my_profile.html.twig',[
+           "news" => $news,
         ]);
     }
 }

@@ -1,0 +1,63 @@
+{% extends 'profile_base.html.twig' %}
+
+
+{% block main %}
+
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h2>قائمة بالأخبار التي طلبتها موجودة هنا!!</h2></div>
+            <div class="panel-body">
+
+                <div class="col-sm-12 politics_main_1">
+
+                    <div class="row">
+
+                        {% for post in news %}
+
+                            <div class="col-sm-4">
+                                <div class="politics_3">
+                                    <a href="{{ path('post',{'id':post.id}) }}">
+                                        <h4>{{ post.title }}</h4>
+                                        {% if post.mainImage != "" %}
+                                            <img src="{{ asset('uploads/') }}{{ post.mainImage }}" width="100%" height="300px">
+                                        {% else %}
+                                            <img src="https://i.pinimg.com/736x/98/ae/fd/98aefd81b638277eeb74258c17ac8d57--funny-shit-funny-cats.jpg" width="100%">
+                                        {% endif %}
+                                    </a>
+                                </div>
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+
+{% block stylesheets %}
+    <style>
+        h4{
+            text-align: center!important;
+            font-size: 16px!important;
+        }
+        .politics_3{
+            margin-bottom: 10px!important;
+        }
+        .politics_3 a h4 img{
+            height: 200px!important;
+        }
+
+        .panel{
+            direction: rtl!important;
+        }
+
+    </style>
+{% endblock %}

@@ -79,6 +79,9 @@ class User extends BaseUser
         $this->log[$id]++;
     }
 
+    public function setOneLog($id,$val){
+        $this->log[$id] = $val;
+    }
 
     /**
      * @return string

@@ -48,7 +48,7 @@
                             <div class="collapse navbar-collapse" id="myNavbar">
                                 <ul class="nav navbar-nav">
                                     <li><a class="nave border_1 {% block iActive %} {% endblock %}" href="{{ path('index') }}">الرئيسية</a></li>
-                                    <li><a class="nave border_1 {% block sActive %} {% endblock %}" href="{{ path('syria') }}">أخباري المفضلة</a></li>
+                                    <li><a class="nave border_1 {% block sActive %} {% endblock %}" href="{{ path('user_news') }}">أخباري المفضلة</a></li>
 
                                     {% if is_granted('ROLE_ADMIN') %}
                                         <li><a class="nave" href="{{ path('admin_default_index') }}">لوحة التحكم</a></li>
