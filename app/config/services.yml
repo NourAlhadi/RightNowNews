@@ -38,5 +38,6 @@ services:
 
 
     AppBundle\Service\FilterNews:
+            public: true
 
 

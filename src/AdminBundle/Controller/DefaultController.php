@@ -5,10 +5,14 @@ namespace AdminBundle\Controller;
 use AdminBundle\Service\Helper;
 use AppBundle\Entity\news;
 use AppBundle\Entity\tag;
+use AppBundle\Entity\type;
 use AppBundle\Form\newsType;
+use AppBundle\Service\FilterNews;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -620,5 +624,116 @@ class DefaultController extends Controller
             $em->flush();
         }
         return $this->redirectToRoute("admin_messages");
+    }
+
+
+
+    /**
+     * @Route("/profile/developer/",name="get_developer")
+     */
+    public function getDeveloperAction(Request $request){
+
+        $sub = $request->request->get('key');
+        $st = $request->request->get('start');
+        if ($sub != null){
+            $new_id = uniqid();
+            $this->getUser()->setApi($new_id);
+            $this->get('fos_user.user_manager')->updateUser($this->getUser());
+        }
+
+        if ($st != null){
+            return $this->redirectToRoute('api_start');
+        }
+        return $this->render('default/get_developer.html.twig');
+    }
+
+    /**
+     * @Route("/api/start/",name="api_start")
+     */
+    public function apiStartAction(Request $request){
+        return $this->render('default/api.html.twig');
+    }
+
+
+    /**
+     * @Route("/api/query",name="api")
+     * @Method("GET")
+     */
+    public function apiAction(Request $request){
+        $em = $this->getDoctrine()->getManager();
+
+        $filter = new FilterNews();
+
+        $api = $request->get("api");
+        if ($api == null){
+            $data = [
+                "result" => "ERROR",
+                "message" => "لم يتم توفير رمز مطور صالح!!"
+            ];
+            return new JsonResponse($data);
+        }
+
+        $users = $em->getRepository('AppBundle:User')->findAll();
+        $valid = false;
+        for ($i =0; $i < sizeof($users); $i++){
+            if ($users[$i]->getApi() == $api){
+                $valid = true;
+            }
+        }
+        if (!$valid){
+            $data = [
+                "result" => "ERROR",
+                "message" => "لم يتم توفير رمز مطور صالح!!"
+            ];
+            return new JsonResponse($data);
+        }
+
+        $qnews = $request->get('news');
+        $qtype = $request->get('type');
+
+        if ($qnews == null && $qtype == null){
+            $data = [
+                "result" => "ERROR",
+                "message" => "لم يتم طلب أي شيء من المنصة!!"
+            ];
+            return new JsonResponse($data);
+        }
+
+        $type = $em->getRepository('AppBundle:type')->findOneBy(['name'=>$qtype]);
+        if ($qnews == null && $type == null){
+            $data = [
+                "result" => "ERROR",
+                "message" => "لم يتم توفير نوع صحيح من الأخبار للمنصة!!"
+            ];
+            return new JsonResponse($data);
+        }
+
+        $news = $em->getRepository('AppBundle:news')->findBy([],['date'=>'DESC']);
+        $filter->setNewsSet($news);
+        if ($qnews != null && $qnews != "all"){
+            $news = $filter->filter_by_location($qnews);
+        }
+        $filter->setNewsSet($news);
+        if ($type != null){
+            $news = $filter->filter_by_type($type);
+        }
+
+
+        $encoder = new JsonEncoder();
+        $normalizer = new ObjectNormalizer();
+        $normalizer->setCircularReferenceHandler(function ($object) {
+            return $object->getName();
+        });
+        $serializer = new Serializer(array($normalizer), array($encoder));
+        $news_set = $serializer->serialize($news, 'json');
+
+        $data = [
+            "result" => "ACCEPTED",
+            "cnt" => sizeof($news),
+            "news_set" => $news_set
+
+        ];
+        return new JsonResponse($data);
+
     }
 }

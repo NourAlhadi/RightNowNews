@@ -59,6 +59,30 @@ class User extends BaseUser
     private $log;
 
     /**
+     * @ORM\Column(name="api", type="string", nullable=true)
+     * @var string
+     */
+    private $api;
+
+    /**
+     * @return string
+     */
+    public function getApi()
+    {
+        return $this->api;
+    }
+
+    /**
+     * @param string $api
+     */
+    public function setApi($api)
+    {
+        $this->api = $api;
+    }
+
+
+
+    /**
      * @return mixed
      */
     public function getLog()

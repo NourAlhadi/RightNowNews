@@ -298,6 +298,9 @@ class FilterNews{
         $ret = [];
         $st = ($st == null ? null: new DateTime($st));
         $en = ($en == null ? null: new DateTime($en));
+        if ($en != null){
+            $en->modify("+1 day");
+        }
         for ($i = 0 ; $i < sizeof($this->news_set); $i++){
             $post = $this->news_set[$i];
             $dt = $post->getDate();

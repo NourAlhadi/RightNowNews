@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h2>مرحبا بك في لوحة تحكم المطورين مع RNN!!</h2></div>
+            <div class="panel-body">
+
+                <div class="col-sm-12">
+
+                    <div class="row">
+                        <h4>من هنا سوف تتكمن من إرسال طلبات API لاستقبال معلومات الموقع وأخر الأخبار على شكل معلومات JSON.</h4>
+                        <h4>ولأننا هنا ضمن فريق العمل نطمح لأن تكون تجربتكم معنا في غاية الراحة والمتعة نتيح لكم منصة عمل سهلة للغاية.</h4>
+                        <h4 class="alert alert-warning">احرص على استخدامك رمز API الذي قمت بتوليده سابقا لضمان العمل بشكل صحيح</h4>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <h4 class="alert alert-info">مازالت هذه المنصة قيد التطوير لذلك نتيح لكم الآن عدد محدود من الخيارات:</h4>
+                        <h3>طلب جميع أخبار الموقع:</h3>
+                        <h4> يمكنكم طلب جميع أخبار الموقع من خلال الطلب التالي:</h4>
+                        <h4 class="col-sm-12 well well-lg">http://rnn.com/api/query?news=all&api=YOUR_API_KEY</h4>
+                        <h4>حيث يتم استبدال YOUR_API_KEY بالرمز الخاص بك كمطور ضمن الموقع</h4>
+                    </div>
+
+                    <hr>
+                    <div class="row">
+                        <h3>طلب أخبار مكان معبن (دولة معينة):</h3>
+                        <h4 class="col-sm-12 well well-lg">http://rnn.com/api/query?news=COUNTRY_NAME&api=YOUR_API_KEY</h4>
+                        <h4>حيث يتم استبدال COUNTRY_NAME بالبلد الذي تقوم بالبحث عنه</h4>
+                    </div>
+
+
+                    <hr>
+                    <div class="row">
+                        <h3>طلب أخبار من نوع معين:</h3>
+                        <h4 class="col-sm-12 well well-lg">http://rnn.com/api/query?type=TYPE_NAME&api=YOUR_API_KEY</h4>
+                        <h4>حيث يتم استبدال TYPE_NAME بالنوع الذي تريده من الأخبار</h4>
+                        <h4 class="alert alert-warning">يجب أن يتطابق النوع الذي تبحث عنه تطابق حرفي مع أحد الأنواع التالية: سياسة - رياضة - اقتصاد - تكنولوجيا - فنون - علوم - موضة - منوع</h4>
+                    </div>
+
+                    <hr>
+                    <div class="row">
+                        <h3>كما ويمكنك طلب الطلبين الأول أو الثاني مع الثالث مجتمعين معا للبحث عن نوع معين من الأخبار ضمن بلد معين أو جميع الأخبار:</h3>
+                        <h4 class="col-sm-12 well well-lg">http://rnn.com/api/query?news=COUNTRY_NAME&type=TYPE_NAME&api=YOUR_API_KEY</h4>
+                    </div>
+
+
+                    <hr>
+                    <div class="row">
+                        <h3>الردود المتوقعة من المنصة:</h3>
+                        <h4> في كلا حالتي القبول أو الرفض سيتم تضمين رسالة (result) تحوي الرد المتوقع إما قبول (ACCEPTED) أو رفض (ERROR).</h4>
+                        <br><h4>في حال قبول الطلب ستحصل على رد يتضمن عدد (cnt) يمثل عدد الأخبار المحققة لشروط البحث (قد يساوي الصفر) مرافق له مصفوفة (news_set) من نوع خبر تحوي الأخبار المطلوبة.</h4>
+                        <br><h4>في حال رفض الطلب سيتم تضمين رسالة (message) تحتوي سبب الرفض.</h4>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .well{
+            direction: ltr!important;
+            text-align: left!important;
+        }
+    </style>
+{% endblock %}
