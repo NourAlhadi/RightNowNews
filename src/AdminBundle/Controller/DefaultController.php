@@ -730,7 +730,7 @@ class DefaultController extends Controller
         $data = [
             "result" => "ACCEPTED",
             "cnt" => sizeof($news),
-            "news_set" => $news_set
+            "news_set" => json_decode($news_set,true)
 
         ];
         return new JsonResponse($data);
